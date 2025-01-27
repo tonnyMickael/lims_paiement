@@ -1,0 +1,6 @@
+@LIMS_PaiementBack_HostAddress = http://localhost:5290
+
+GET {{LIMS_PaiementBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
