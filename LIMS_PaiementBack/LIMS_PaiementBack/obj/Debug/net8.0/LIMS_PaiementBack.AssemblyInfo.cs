@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LIMS_PaiementBack")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e05f671bfccb3c73e797854387a07f015ee1290a")]
 [assembly: System.Reflection.AssemblyProductAttribute("LIMS_PaiementBack")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LIMS_PaiementBack")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
