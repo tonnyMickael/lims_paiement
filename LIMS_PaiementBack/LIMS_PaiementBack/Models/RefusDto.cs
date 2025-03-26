@@ -12,7 +12,7 @@
         public int EtatPaiement { get; set; }
 
         //attribut etat decompte 
-        public string referenceEtatDecompte { get; set; } = string.Empty; 
+        public string? referenceEtatDecompte { get; set; } 
 
         //attribut commun
         public int id_paiement { get; set; }

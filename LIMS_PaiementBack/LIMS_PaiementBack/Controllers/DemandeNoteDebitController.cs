@@ -26,7 +26,16 @@ namespace LIMS_PaiementBack.Controllers
                 return BadRequest("Les données de la demande sont invalides.");
             }                  
             await _service.AddDemandeAsync(demande);
-            return Ok(demande);
+
+            var reponse = new ApiResponse
+            {
+                Data = demande,
+                Message = "nouvelle demande ajouter avc succès",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+
+            return Ok(reponse);
         }
 
         [HttpGet("NoteDoitfaire")]

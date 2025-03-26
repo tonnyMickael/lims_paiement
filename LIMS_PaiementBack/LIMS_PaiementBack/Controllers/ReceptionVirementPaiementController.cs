@@ -1,7 +1,9 @@
 ﻿using LIMS_PaiementBack.Models;
 using LIMS_PaiementBack.Services;
+using LIMS_PaiementBack.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace LIMS_PaiementBack.Controllers
 {
@@ -31,7 +33,16 @@ namespace LIMS_PaiementBack.Controllers
                 return BadRequest("Les données du recu sont invalides.");
             }
             await _receptionVirementPaiement.AddVirementPaiementRecu(recu);
-            return Ok(recu);
+
+            var reponse = new ApiResponse
+            {
+                Data = recu,
+                Message = "Paiement en espéce enregistrer, en attente de récéption",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+
+            return Ok(reponse);
         }
     }
 }

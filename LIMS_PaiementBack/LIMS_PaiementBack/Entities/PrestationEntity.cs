@@ -14,9 +14,11 @@ namespace LIMS_PaiementBack.Entities
 
         [ForeignKey(nameof(id_client))]
         public ClientEntity client { get; set; }
+
         [ForeignKey(nameof(id_etat_prestation))]
         public EtatPrestationEntity etatPrestation { get; set; }
         // ⚠️ Ajout de la relation 0-1 avec EtatDecompteEntity
         public EtatDecompteEntity? EtatDecompte { get; set; }
+        public ICollection<EchantillonEntity> Echantillons { get; set; } = new List<EchantillonEntity>();
     }
 }

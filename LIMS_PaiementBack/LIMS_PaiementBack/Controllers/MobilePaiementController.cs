@@ -1,5 +1,6 @@
 ﻿using LIMS_PaiementBack.Models;
 using LIMS_PaiementBack.Services;
+using LIMS_PaiementBack.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,14 +25,23 @@ namespace LIMS_PaiementBack.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddConfirmationMobile([FromBody] PaiementDto espece)
+        public async Task<IActionResult> AddConfirmationMobile([FromBody] PaiementDto mobile)
         {
-            if (espece == null)
+            if (mobile == null)
             {
                 return BadRequest("Les données du delai sont invalides.");
             }
-            await _mobilePaiement.AddMobilePaiement(espece);
-            return Ok(espece);
+            await _mobilePaiement.AddMobilePaiement(mobile);
+
+            var reponse = new ApiResponse
+            {
+                Data = mobile,
+                Message = "Paiement par mobile enregistrer, en attente de récéption",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+
+            return Ok(reponse);
         }
     }
 }

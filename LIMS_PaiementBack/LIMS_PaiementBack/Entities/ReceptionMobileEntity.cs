@@ -8,6 +8,7 @@ namespace LIMS_PaiementBack.Entities
         [Key]
         public int idRecepiotnMobile { get; set; }
         public int referencce { get; set; }
+        public int operateurmobile { get; set; }
         public int idPaiement { get; set; }
 
         [ForeignKey(nameof(idPaiement))]

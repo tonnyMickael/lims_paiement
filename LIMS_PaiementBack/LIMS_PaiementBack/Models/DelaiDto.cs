@@ -6,7 +6,7 @@ namespace LIMS_PaiementBack.Models
     {
         //attribut Etat decompte
         public int id_etat_decompte { get; set; }
-        public string referenceEtatDecompte { get; set; } = string.Empty;
+        public string? referenceEtatDecompte { get; set; }
         public DateTime date_etat_decompte { get; set; }
 
         //attribut paiement

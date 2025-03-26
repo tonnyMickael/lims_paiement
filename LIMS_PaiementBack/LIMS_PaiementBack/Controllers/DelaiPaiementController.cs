@@ -3,6 +3,7 @@ using LIMS_PaiementBack.Services;
 using LIMS_PaiementBack.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 
 namespace LIMS_PaiementBack.Controllers
 {
@@ -25,7 +26,16 @@ namespace LIMS_PaiementBack.Controllers
                 return BadRequest("Les données du delai sont invalides.");
             }
             await _service.AddDelaiAsync(delai);
-            return Ok(delai);
+
+            var reponse = new ApiResponse
+            {
+                Data = delai,
+                Message = "délai de paiement enregistrer",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+
+            return Ok(reponse);
         }
 
         [HttpGet]
