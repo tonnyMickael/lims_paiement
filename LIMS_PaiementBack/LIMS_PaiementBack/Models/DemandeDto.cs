@@ -37,14 +37,5 @@
         public double? montant { get; set; }
         public int id_etat_decompte { get; set; }
 
-        /*public DemandeDto() { }
-
-        public int idEtatDecomptes;
-        public string ReferenceEtatDecompte;
-        public DateTime date_Etat_Decompte;
-        public DemandeDto (int id, string reference, DateTime date)
-        {
-            idEtatDecomptes = id; ReferenceEtatDecompte = reference; date_Etat_Decompte = date;
-        }*/
     }
 }

@@ -10,10 +10,14 @@ namespace LIMS_PaiementBack.Entities
         public DateTime? DatePaiement { get; set; }
         public int ModePaiement { get; set; }
         public int EtatPaiement { get; set; }
+        public string? nomDuPayant { get; set; }
+        public string? prenomDuPayant { get; set; }
+        public int contactdupayant { get; set; }
         public int id_etat_decompte { get; set; }
 
         [ForeignKey(nameof(id_etat_decompte))]
-        public EtatDecompteEntity etatdecompte { get; set; }
+        public EtatDecompteEntity? etatdecompte { get; set; }
+        
         public List<DelaiEntity> Delais { get; set; }
         public List<OrdreDeVirementEntity> ordreDeVirements { get; set; }
         public List<ReceptionEspeceEntity> receptionEspeces { get; set; }

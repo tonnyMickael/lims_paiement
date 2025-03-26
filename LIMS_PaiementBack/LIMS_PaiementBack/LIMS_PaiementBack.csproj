@@ -7,8 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Contrat\" />
+    <Folder Include="Services\Delai\" />
+    <Folder Include="Services\Demande\" />
+    <Folder Include="Services\Espece\" />
+    <Folder Include="Services\Mobile\" />
+    <Folder Include="Services\ReceptionVirement\" />
+    <Folder Include="Services\ReceptionMobile\" />
+    <Folder Include="Services\ReceptionEspece\" />
+    <Folder Include="Services\Refus\" />
+    <Folder Include="Services\Virement\" />
   </ItemGroup>
 
 </Project>

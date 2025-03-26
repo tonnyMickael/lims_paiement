@@ -3,12 +3,12 @@
     public class ContratDto
     {
         //attribut partenaire
-        public string nomEntreprice { get; set; } = string.Empty;
+        public string? nomEntreprise { get; set; }
         public int etat { get; set; }
         
         //attribut contratpartenaire
         public int idContratPartenaire { get; set; }
-        public string referenceContrat { get; set; } = string.Empty;
+        public string? referenceContrat { get; set; }
         public DateTime datePaiement { get; set; }
         
         //attribut commun

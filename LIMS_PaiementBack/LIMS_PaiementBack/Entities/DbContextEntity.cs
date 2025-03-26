@@ -11,6 +11,7 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<PrestationEntity> Prestation { get; set; }
         public DbSet<EtatPrestationEntity> Etat_prestation { get; set; }
         public DbSet<EchantillonEntity> Echantillon { get; set; }
+        public DbSet<TypeEchantillonEntity> TypeEchantillon { get; set; }
         public DbSet<EtatDecompteEntity> Etat_decompte { get; set; }
         public DbSet<DestinataireEntity> Destinataire { get; set; }
         public DbSet<DepartEntity> Depart { get; set; }
@@ -28,7 +29,7 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<ContratPartenaireEntity> ContratPartenaire {  get; set; }
         public DbSet<EtatJournalierEntity> EtatJournalier { get; set; }
         public DbSet<SemaineEntity> Semaine { get; set; }
-        public DbSet<EtatHebdomadaireEntity> EtatHebdomaire { get; set; }
+        public DbSet<EtatHebdomadaireEntity> EtatHebdomadaire { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +39,7 @@ namespace LIMS_PaiementBack.Entities
             modelBuilder.Entity<PrestationEntity>().ToTable("Prestation");
             modelBuilder.Entity<EtatPrestationEntity>().ToTable("Etat_prestation");
             modelBuilder.Entity<EchantillonEntity>().ToTable("Echantillon");
+            modelBuilder.Entity<TypeEchantillonEntity>().ToTable("TypeEchantillon");
             modelBuilder.Entity<EtatDecompteEntity>().ToTable("Etat_decompte");
             modelBuilder.Entity<DestinataireEntity>().ToTable("Destinataire");
             modelBuilder.Entity<DepartEntity>().ToTable("Depart");

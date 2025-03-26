@@ -1,11 +1,30 @@
 using LIMS_PaiementBack.Entities;
 using LIMS_PaiementBack.Repositories;
+using LIMS_PaiementBack.Repositories.Depart;
+using LIMS_PaiementBack.Repositories.EtatHebdomadaire;
+using LIMS_PaiementBack.Repositories.EtatJournalier;
 using LIMS_PaiementBack.Services;
+using LIMS_PaiementBack.Services.Depart;
+using LIMS_PaiementBack.Services.EtatHebdomadaire;
+using LIMS_PaiementBack.Services.EtatJournalier;
 using LIMS_PaiementBack.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "Authorized",
+                      policy =>
+                      {
+                          //policy.WithOrigins("http://0.0.0.0:5204")
+                          policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          //   Just for this time but we need it after The token thing and Auth
+                          .AllowAnyHeader();
+                      });
+});
 
 // Add services to the container.
 
@@ -44,6 +63,27 @@ builder.Services.AddScoped<IMobilePaiementService, MobilePaiementService>();
 builder.Services.AddScoped<IVirementPaiementRepository, VirementPaiementRepository>();
 builder.Services.AddScoped<IVirementPaiementService, VirementPaiementService>();
 
+builder.Services.AddScoped<IReceptionEspecePaiementRepository, ReceptionEspecePaiementRepository>();
+builder.Services.AddScoped<IReceptionEspecePaiementService, ReceptionEspecePaiementService>();
+
+builder.Services.AddScoped<IReceptionMobilePaiementRepository, ReceptionMobilePaiementRepository>();
+builder.Services.AddScoped<IReceptionMobilePaiementService, ReceptionMobilePaiementService>();
+
+builder.Services.AddScoped<IReceptionVirementPaiementRepository, ReceptionVirementPaiementRepository>();
+builder.Services.AddScoped<IReceptionVirementPaiementService, ReceptionVirementPaiementService>();
+
+builder.Services.AddScoped<IRefusPaiementRepository, RefusPaiementRepository>();
+builder.Services.AddScoped<IRefusPaiementService, RefusPaiementService>();
+
+builder.Services.AddScoped<IDestinataireRepository, DestinataireRepository>();
+builder.Services.AddScoped<IDestinataireService, DestinataireService>();
+
+builder.Services.AddScoped<IEtatJournalierRepository, EtatJournalierRepository>();
+builder.Services.AddScoped<IEtatJournalierService, EtatJournalierService>();
+
+builder.Services.AddScoped<IEtatHebdomadaireRepository, EtatHebdomadaireRepository>();
+builder.Services.AddScoped<IEtatHebdomadaireService, EtatHebdomadaireService>();
+
 builder.Services.AddScoped<Email>();
 
 var app = builder.Build();
@@ -51,8 +91,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+   app.UseSwagger();
+   app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

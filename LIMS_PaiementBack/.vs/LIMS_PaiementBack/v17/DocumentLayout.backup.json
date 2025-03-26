@@ -3,24 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\controllers\\especepaiementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\controllers\\especepaiementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\models\\paiementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\models\\paiementdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\repositories\\especepaiementrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\repositories\\especepaiementrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|c:\\users\\andymickael\\desktop\\omnis\\tests\\lims_paiement\\lims_paiementback\\lims_paiementback\\controllers\\etatjournaliercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{15396456-7CA0-4AD4-9785-F03638A7119C}|LIMS_PaiementBack\\LIMS_PaiementBack.csproj|solutionrelative:lims_paiementback\\controllers\\etatjournaliercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,66 +26,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Program.cs",
-              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Program.cs",
-              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Program.cs",
-              "RelativeToolTip": "LIMS_PaiementBack\\Program.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAAADcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T18:55:05.82Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Properties\\launchSettings.json",
-              "RelativeToolTip": "LIMS_PaiementBack\\Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-02-19T18:47:09.181Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "EspecePaiementRepository.cs",
-              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Repositories\\EspecePaiementRepository.cs",
-              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Repositories\\EspecePaiementRepository.cs",
-              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Repositories\\EspecePaiementRepository.cs",
-              "RelativeToolTip": "LIMS_PaiementBack\\Repositories\\EspecePaiementRepository.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAxwCgAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T15:52:31.057Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PaiementDto.cs",
-              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Models\\PaiementDto.cs",
-              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Models\\PaiementDto.cs",
-              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Models\\PaiementDto.cs",
-              "RelativeToolTip": "LIMS_PaiementBack\\Models\\PaiementDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T12:17:02.202Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "EspecePaiementController.cs",
-              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Controllers\\EspecePaiementController.cs",
-              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Controllers\\EspecePaiementController.cs",
-              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Controllers\\EspecePaiementController.cs",
-              "RelativeToolTip": "LIMS_PaiementBack\\Controllers\\EspecePaiementController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "EtatJournalierController.cs",
+              "DocumentMoniker": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Controllers\\EtatJournalierController.cs",
+              "RelativeDocumentMoniker": "LIMS_PaiementBack\\Controllers\\EtatJournalierController.cs",
+              "ToolTip": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\Controllers\\EtatJournalierController.cs",
+              "RelativeToolTip": "LIMS_PaiementBack\\Controllers\\EtatJournalierController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-19T12:09:57.017Z",
+              "WhenOpened": "2025-03-12T10:56:26.135Z",
               "EditorCaption": ""
             }
           ]

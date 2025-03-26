@@ -3,20 +3,23 @@
     public class PaiementDto
     {
         //attribut affichage paiement espece
-        public string titre { get; set; } = string.Empty;
-        public string clients { get; set; } = string.Empty;
-        public string email { get; set; } = string.Empty;
-        public string adresse { get; set; } = string.Empty;
-        public string contact { get; set; } = string.Empty;
-        public string identite { get; set; } = string.Empty;
+        public string? titre { get; set; } 
+        public string? clients { get; set; } 
+        public string? email { get; set; }
+        public string? adresse { get; set; }
+        public string? contact { get; set; }
+        public string? identite { get; set; }
         public double montant { get; set; }
-        public string etatDecompte { get; set; } = string.Empty;
+        public string? etatDecompte { get; set; }
 
-        //attribut paiement espece post
+        //attribut paiement post
         public DateTime DatePaiement { get; set; }
         public int ModePaiement { get; set; }
         public int EtatPaiement { get; set; }
-       
+        public string? nomPayant { get; set; }
+        public string? prenomPayant { get; set; }
+        public int contactdupayant { get; set; }
+
         //attribut commun
         public int id_etat_decompte { get; set; }
     }

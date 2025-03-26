@@ -1,4 +1,7 @@
-﻿namespace LIMS_PaiementBack.Utils
+﻿using Humanizer;
+using System.Globalization;
+
+namespace LIMS_PaiementBack.Utils
 {
     public class FonctionGlobalUtil
     {
@@ -16,5 +19,19 @@
             double resultat = TotalMontant - (TotalMontant * remise / 100);
             return resultat;
         }
+
+        //montant en lettre
+        public static string ConvertirMontantEnLettres(decimal totalMontant, double remise)
+        {
+            decimal montantReel = (decimal)FonctionGlobalUtil.MontantReel(totalMontant, remise);
+            return ((int)montantReel).ToWords(new CultureInfo("fr"));
+        }
+
+        //factorisation des designation de type d'echantillon
+        public static string GetObjetEchantillon(List<string> type)
+        {
+            return string.Join(", ", type);
+        }
+
     }
 }

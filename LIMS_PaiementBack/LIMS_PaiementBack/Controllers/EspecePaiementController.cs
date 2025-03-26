@@ -1,5 +1,6 @@
 ﻿using LIMS_PaiementBack.Models;
 using LIMS_PaiementBack.Services;
+using LIMS_PaiementBack.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +32,16 @@ namespace LIMS_PaiementBack.Controllers
                 return BadRequest("Les données du delai sont invalides.");
             }
             await _especePaiement.AddEspecePaiement(espece);
-            return Ok(espece);
+
+            var reponse = new ApiResponse
+            {
+                Data = espece,
+                Message = "Paiement en espéce enregistrer, en attente de récéption",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+
+            return Ok(reponse);
         }
     }
 }

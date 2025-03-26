@@ -8,6 +8,7 @@ namespace LIMS_PaiementBack.Entities
         [Key]
         public int idOrdreDeVirement { get; set; }
         public string reference { get; set; } = string.Empty;
+        public string banque { get; set; } = string.Empty;
         public int idPaiement { get; set; }
 
         [ForeignKey(nameof(idPaiement))]
