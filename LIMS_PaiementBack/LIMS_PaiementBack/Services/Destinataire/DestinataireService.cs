@@ -24,6 +24,7 @@ namespace LIMS_PaiementBack.Services.Depart
             };
 
             await _destinataireRepository.AddNewDestinataire(destinataires);
+
         }
 
         public async Task<ApiResponse> GetAllDestinataire(int position, int pagesize)
