@@ -13,18 +13,18 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "Authorized",
-                      policy =>
-                      {
-                          //policy.WithOrigins("http://0.0.0.0:5204")
-                          policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          //   Just for this time but we need it after The token thing and Auth
-                          .AllowAnyHeader();
-                      });
-});
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy(name: "Authorized",
+//                       policy =>
+//                       {
+//                           //policy.WithOrigins("http://localhost:5204")
+//                           policy.AllowAnyOrigin()
+//                           .AllowAnyMethod()
+//                           //   Just for this time but we need it after The token thing and Auth
+//                           .AllowAnyHeader();
+//                       });
+// });
 
 // Add services to the container.
 
@@ -83,6 +83,9 @@ builder.Services.AddScoped<IEtatJournalierService, EtatJournalierService>();
 
 builder.Services.AddScoped<IEtatHebdomadaireRepository, EtatHebdomadaireRepository>();
 builder.Services.AddScoped<IEtatHebdomadaireService, EtatHebdomadaireService>();
+
+builder.Services.AddScoped<IDepartRepository, DepartRepository>();
+builder.Services.AddScoped<IDepartService, DepartService>();
 
 builder.Services.AddScoped<Email>();
 

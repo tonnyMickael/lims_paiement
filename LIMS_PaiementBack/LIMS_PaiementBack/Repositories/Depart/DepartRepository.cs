@@ -29,7 +29,6 @@ namespace LIMS_PaiementBack.Repositories.Depart
             if (existingDepart != null)
             {
                 // Un doublon existe, donc on ne fait rien
-                return false;
             }
 
             // Récupérer la dernière référence en tant qu'entier
@@ -51,7 +50,6 @@ namespace LIMS_PaiementBack.Repositories.Depart
             await _dbContext.Depart.AddAsync(depart);
             await _dbContext.SaveChangesAsync();
 
-            return true;
         }
 
         public async Task<ApiResponse> DepartGetAllDemande()

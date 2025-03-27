@@ -29,7 +29,6 @@ namespace LIMS_PaiementBack.Services
 
             await _demandeRepository.AddDemandeAsync(demandeNote);
 
-
         }
 
         // liste des demandes de note de débit à faire
