@@ -1,8 +1,8 @@
-﻿using LIMS_PaiementBack.Entities;
+﻿using LIMS_PaiementBack.Utils;
 using LIMS_PaiementBack.Models;
-using LIMS_PaiementBack.Repositories;
-using LIMS_PaiementBack.Utils;
+using LIMS_PaiementBack.Entities;
 using System.Collections.Generic;
+using LIMS_PaiementBack.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LIMS_PaiementBack.Services
@@ -17,12 +17,20 @@ namespace LIMS_PaiementBack.Services
         }
 
         //ajout de nouveau délai pour un prestation
+        /*
+            * Ajoute un nouveau délai de paiement pour une prestation.
+            * 
+            * @param delai Le DelaiDto contenant les détails du délai à ajouter.
+            * @returns Une tâche représentant l'opération asynchrone.
+            * @throws ArgumentNullException si le délai est nul.
+        */
         public async Task AddDelaiAsync(DelaiDto delai)
         {
             var paiement = new PaiementEntity
             {
                 DatePaiement = delai.datePaiement,
-                EtatPaiement = 30,
+                EtatPaiement = delai.EtatPaiement,
+                ModePaiement = delai.modePaiement,
                 id_etat_decompte = delai.id_etat_decompte
             };
 
@@ -40,14 +48,15 @@ namespace LIMS_PaiementBack.Services
         public Task<ApiResponse> GetDelaiPaiement()
         {
             return _delaiRepository.GetAllDelaiAsync();
-        }
+        }    
 
-        /*public Task<ApiResponse> GetDelaiAccorder(int id_etat_decompte)
-        {
-            return _delaiRepository.GetValidationDelai(id_etat_decompte);
-        }*/
-
-        //filtre et affichage des données pour une prestation accordé pour un délai 
+        //filtre et affichage des données pour une prestation accordé pour un délai
+        /*
+            * Récupère les données de délai accordé pour un état de décompte spécifique.
+            * 
+            * @param id_etat_decompte L'ID de l'état de décompte à filtrer.
+            * @returns Une tâche contenant un ApiResponse avec les données filtrées.
+        */ 
         public async Task<ApiResponse> GetDelaiAccorder(int id_etat_decompte)
         {
             var data = await _delaiRepository.GetValidationDelai(id_etat_decompte);            
@@ -63,15 +72,16 @@ namespace LIMS_PaiementBack.Services
                     StatusCode = 500
                 };
             }
+
             //verification du stat du client qui est sous contrat ou non 
             if(data.Message.ToString() == "Client sous contrat suivre procédure") 
             {
                 return new ApiResponse
                 {
-                    Data = data,
+                    Data = data.Data,
                     Message = "Client sous contrat",
-                    IsSuccess = false,
-                    StatusCode = 400
+                    IsSuccess = true,
+                    StatusCode = 200
                 };
             }
 
@@ -96,8 +106,8 @@ namespace LIMS_PaiementBack.Services
 
             // Filtrer les prestations dans les 6 derniers mois
             int totalEchantillons6Mois = prestations
-                .Where(p => p.DatePaiement >= date6Mois && p.DatePaiement <= dateReference)
-                .Sum(p => (int)p.NombreEchantillon);
+                .Where(p => p.datePaiement >= date6Mois && p.datePaiement <= dateReference)
+                .Sum(p => (int)p.nombreEchantillon);
 
             // Vérifier si le total atteint 600 en 6 mois
             //if (totalEchantillons6Mois >= 600)
@@ -119,8 +129,8 @@ namespace LIMS_PaiementBack.Services
 
             // Filtrer les prestations dans les 12 derniers mois
             int totalEchantillons1An = prestations
-                .Where(p => p.DatePaiement >= date1An && p.DatePaiement <= dateReference)
-                .Sum(p => (int)p.NombreEchantillon);
+                .Where(p => p.datePaiement >= date1An && p.datePaiement <= dateReference)
+                .Sum(p => (int)p.nombreEchantillon);
 
             // Vérifier si le total atteint 600 en 1 an
             //if (totalEchantillons1An >= 600)
@@ -149,6 +159,32 @@ namespace LIMS_PaiementBack.Services
                 IsSuccess = false,
                 StatusCode = 400
             };
+        }
+
+        public Task<ApiResponse> GetDelaiApayer()
+        {
+            // Récupérer les délais de paiement à payer
+            return _delaiRepository.GetValidationDelaiApayer();
+        }
+
+        public async Task PaiementDelaiDirectAsync(int id_etat_decompte, int modepaiement)
+        {
+            await _delaiRepository.PaiementDelaiDirect(id_etat_decompte, modepaiement);
+        }
+
+        public async Task PaiementDelaiParChangementAsync(int id_etat_decompte, int modepaiement)
+        {
+            await _delaiRepository.PaiementDelaiParChangement(id_etat_decompte, modepaiement);
+        }
+
+        public Task<ApiResponse> GetDelaiEnAttenteAsync()
+        {
+            return _delaiRepository.GetDelaiEnAttente();
+        }
+
+        public Task<ApiResponse> GetPrestationApayerAsync()
+        {
+            return _delaiRepository.GetPrestationApayer();  
         }
     }
 }

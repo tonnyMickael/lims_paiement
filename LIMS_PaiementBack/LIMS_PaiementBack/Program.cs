@@ -1,15 +1,15 @@
-using LIMS_PaiementBack.Entities;
-using LIMS_PaiementBack.Repositories;
-using LIMS_PaiementBack.Repositories.Depart;
-using LIMS_PaiementBack.Repositories.EtatHebdomadaire;
-using LIMS_PaiementBack.Repositories.EtatJournalier;
-using LIMS_PaiementBack.Services;
-using LIMS_PaiementBack.Services.Depart;
-using LIMS_PaiementBack.Services.EtatHebdomadaire;
-using LIMS_PaiementBack.Services.EtatJournalier;
 using LIMS_PaiementBack.Utils;
+using LIMS_PaiementBack.Entities;
+using LIMS_PaiementBack.Services;
 using Microsoft.EntityFrameworkCore;
+using LIMS_PaiementBack.Repositories;
 using System.Text.Json.Serialization;
+using LIMS_PaiementBack.Services.Depart;
+using LIMS_PaiementBack.Repositories.Depart;
+using LIMS_PaiementBack.Services.EtatJournalier;
+using LIMS_PaiementBack.Services.EtatHebdomadaire;
+using LIMS_PaiementBack.Repositories.EtatJournalier;
+using LIMS_PaiementBack.Repositories.EtatHebdomadaire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +51,8 @@ builder.Services.AddScoped<IDemandeService, DemandeService>();
 builder.Services.AddScoped<IDelaiRepository, DelaiRepository>();
 builder.Services.AddScoped<IDelaiService, DelaiService>();
 
-builder.Services.AddScoped<IContratRepository, ContratRepository>();
-builder.Services.AddScoped<IContratService, ContratService>();
+// builder.Services.AddScoped<IContratRepository, ContratRepository>();
+// builder.Services.AddScoped<IContratService, ContratService>();
 
 builder.Services.AddScoped<IEspecePaiementRepository, EspecePaiementRepository>();
 builder.Services.AddScoped<IEspecePaiementService, EspecePaiementService>();
@@ -72,8 +72,8 @@ builder.Services.AddScoped<IReceptionMobilePaiementService, ReceptionMobilePaiem
 builder.Services.AddScoped<IReceptionVirementPaiementRepository, ReceptionVirementPaiementRepository>();
 builder.Services.AddScoped<IReceptionVirementPaiementService, ReceptionVirementPaiementService>();
 
-builder.Services.AddScoped<IRefusPaiementRepository, RefusPaiementRepository>();
-builder.Services.AddScoped<IRefusPaiementService, RefusPaiementService>();
+builder.Services.AddScoped<ISousContratRepository, SousContratRepository>();
+builder.Services.AddScoped<ISousContratService, SousContratService>();
 
 builder.Services.AddScoped<IDestinataireRepository, DestinataireRepository>();
 builder.Services.AddScoped<IDestinataireService, DestinataireService>();

@@ -12,7 +12,9 @@ namespace LIMS_PaiementBack.Entities
         public DateTime date_etat_decompte { get; set; }
 
         [ForeignKey(nameof(id_prestation))]
-        public PrestationEntity prestattion {  get; set; }
+        public PrestationEntity? prestattion {  get; set; }
+
+        public ICollection<Details_etat_decompte_Entity> DetailsEtatDecompte { get; set; } = new List<Details_etat_decompte_Entity>(); // Relation inverse
 
     }
 }

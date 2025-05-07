@@ -44,5 +44,12 @@ namespace LIMS_PaiementBack.Controllers
 
             return Ok(reponse);
         }
+
+        [HttpGet("AConfirmer")]
+        public async Task<IActionResult> GetEspeceAConfirmer() 
+        {
+            var especeAConfirmer = await _receptionEspecePaiement.GetEspeceAConfirmer();
+            return Ok(especeAConfirmer);
+        }
     }
 }

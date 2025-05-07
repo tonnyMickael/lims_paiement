@@ -12,6 +12,7 @@ namespace LIMS_PaiementBack.Entities
         public string? objet { get; set; }
         public double montant { get; set; }
         public string? MontantLiteral { get; set; }
+        public string? travaux { get; set; }
         public int id_etat_decompte { get; set; }
 
         [ForeignKey(nameof(id_etat_decompte))]

@@ -11,7 +11,7 @@ namespace LIMS_PaiementBack.Controllers
     [Route("api/[controller]")]
     public class ContratController : ControllerBase
     {
-        private readonly IContratService _contrat;
+        /*private readonly IContratService _contrat;
 
         public ContratController(IContratService contrat)
         {
@@ -97,6 +97,6 @@ namespace LIMS_PaiementBack.Controllers
             };
 
             return Ok(reponse);
-        }
+        }*/
     }
 }

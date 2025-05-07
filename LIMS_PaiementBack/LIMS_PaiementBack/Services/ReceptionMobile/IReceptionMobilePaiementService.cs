@@ -7,5 +7,6 @@ namespace LIMS_PaiementBack.Services
     {
         Task<ApiResponse> GetMobileAPayer();
         Task AddMobilePaiementRecu(RecuDto recu);
+        Task<ApiResponse> GetMobileAConfirmer();
     }
 }

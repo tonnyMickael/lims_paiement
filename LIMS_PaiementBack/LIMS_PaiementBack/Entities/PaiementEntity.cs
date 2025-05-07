@@ -18,12 +18,11 @@ namespace LIMS_PaiementBack.Entities
         [ForeignKey(nameof(id_etat_decompte))]
         public EtatDecompteEntity? etatdecompte { get; set; }
         
-        public List<DelaiEntity> Delais { get; set; }
-        public List<OrdreDeVirementEntity> ordreDeVirements { get; set; }
-        public List<ReceptionEspeceEntity> receptionEspeces { get; set; }
-        public List<ReceptionMobileEntity> receptionMobiles { get; set; }
-        public List<RefusEntity> refus { get; set; }
-        public List<SousContratEntity> sousContrat { get; set; }
+        public List<DelaiEntity> Delais = new List<DelaiEntity>();
+        public List<OrdreDeVirementEntity> ordreDeVirements = new List<OrdreDeVirementEntity>();
+        public List<ReceptionEspeceEntity> receptionEspeces = new List<ReceptionEspeceEntity>();
+        public List<ReceptionMobileEntity> receptionMobiles = new List<ReceptionMobileEntity>();
+        public List<SousContratEntity> sousContrat = new List<SousContratEntity>();
     }
 
 }

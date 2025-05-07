@@ -7,7 +7,7 @@ namespace LIMS_PaiementBack.Services
 {
     public interface IDemandeService
     {
-        Task AddDemandeAsync(DemandeDto demande);
+        Task<List<byte[]>> AddDemandeAsync(DemandeDto demande);
         Task<ApiResponse> GetDemandesAsync(int id_etat_decompte);
         Task<ApiResponse> GetDemandeListNoteAsync();
         Task<ApiResponse> VerificationOublie();

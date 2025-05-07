@@ -7,12 +7,12 @@ namespace LIMS_PaiementBack.Entities
     {
         [Key]
         public int idDepart { get; set; }
-        public string reference { get; set; } = string.Empty;
+        public int reference { get; set; }
         public string objet { get; set; } = string.Empty;
         public DateTime DateDepart { get; set; }
         public int idDestinataire { get; set; }
 
         [ForeignKey(nameof(idDestinataire))]
-        public DestinataireEntity Destinataire { get; set; }
+        public DestinataireEntity? Destinataire { get; set; }
     }
 }

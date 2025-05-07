@@ -11,12 +11,13 @@ namespace LIMS_PaiementBack.Entities
         public int id_etat_prestation { get; set; }
         public decimal total_montant { get; set; }
         public double remise { get; set; }
+        public int status_paiement { get; set; } // 1 = non payé, 2 = payé, 3 = payé et demande effectuée
 
         [ForeignKey(nameof(id_client))]
-        public ClientEntity client { get; set; }
-
-        [ForeignKey(nameof(id_etat_prestation))]
-        public EtatPrestationEntity etatPrestation { get; set; }
+        public ClientEntity? client { get; set; }
+        // [ForeignKey(nameof(id_etat_prestation))]
+        // public EtatPrestationEntity? etatPrestation { get; set; }
+        
         // ⚠️ Ajout de la relation 0-1 avec EtatDecompteEntity
         public EtatDecompteEntity? EtatDecompte { get; set; }
         public ICollection<EchantillonEntity> Echantillons { get; set; } = new List<EchantillonEntity>();
