@@ -44,5 +44,12 @@ namespace LIMS_PaiementBack.Controllers
 
             return Ok(reponse);
         }
+
+        [HttpGet("AConfirmer")]
+        public async Task<IActionResult> GetMobileAConfirmer() 
+        {
+            var mobileAConfirmer = await _receptionMobilePaiement.GetMobileAConfirmer();
+            return Ok(mobileAConfirmer);
+        }
     }
 }

@@ -11,8 +11,8 @@ namespace LIMS_PaiementBack.Entities
         public int idSemaine { get; set; }
 
         [ForeignKey(nameof(idSemaine))]
-        public SemaineEntity semaine { get; set; }
+        public SemaineEntity? semaine { get; set; }
         [ForeignKey(nameof(idEtatJournalier))]
-        public EtatJournalierEntity journalier { get; set; }
+        public EtatJournalierEntity? journalier { get; set; }
     }
 }

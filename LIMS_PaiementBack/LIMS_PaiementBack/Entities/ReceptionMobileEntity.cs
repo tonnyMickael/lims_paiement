@@ -6,12 +6,12 @@ namespace LIMS_PaiementBack.Entities
     public class ReceptionMobileEntity
     {
         [Key]
-        public int idRecepiotnMobile { get; set; }
-        public int referencce { get; set; }
-        public int operateurmobile { get; set; }
+        public int idReceptionMobile { get; set; }
+        public int Reference { get; set; }
+        public string? operateurmobile { get; set; }
         public int idPaiement { get; set; }
 
         [ForeignKey(nameof(idPaiement))]
-        public PaiementEntity Paiement { get; set; }
+        public PaiementEntity? Paiement { get; set; }
     }
 }

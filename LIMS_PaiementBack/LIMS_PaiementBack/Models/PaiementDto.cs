@@ -9,6 +9,7 @@
         public string? adresse { get; set; }
         public string? contact { get; set; }
         public string? identite { get; set; }
+        public string? ref_contrat { get; set; }
         public double montant { get; set; }
         public string? etatDecompte { get; set; }
 

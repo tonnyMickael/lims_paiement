@@ -4,6 +4,12 @@ namespace LIMS_PaiementBack.Models
 {
     public class DelaiDto
     {
+        //attribut client 
+        public string? nomClient { get; set; }
+
+        //attribut prestation
+        public double montant { get; set; }
+
         //attribut Etat decompte
         public int id_etat_decompte { get; set; }
         public string? referenceEtatDecompte { get; set; }
@@ -17,5 +23,6 @@ namespace LIMS_PaiementBack.Models
         //attribut delai
         public DateTime DateFinDelai { get; set; }
         public int modePaiement { get; set; }
+        public int nombreEchantillon { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace LIMS_PaiementBack.Services
 {
     public class ContratService : IContratService
     {
-        private readonly IContratRepository _contratRepository;
+        /*private readonly IContratRepository _contratRepository;
 
         public ContratService(IContratRepository contratRepository)
         {
@@ -59,6 +59,6 @@ namespace LIMS_PaiementBack.Services
         public async Task ModifierContrat(int id_partenaire, int id_contrat, ContratDto contrat)
         {            
             await _contratRepository.ModificationEtatContrat(id_partenaire, id_contrat, contrat);
-        }
+        }*/
     }
 }

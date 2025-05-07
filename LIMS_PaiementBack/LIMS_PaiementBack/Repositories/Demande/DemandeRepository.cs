@@ -18,29 +18,168 @@ namespace LIMS_PaiementBack.Repositories
         }
 
         // ajout de nouveau demande de note de débit
-        public async Task AddDemandeAsync(DemandeEntity demande)
+        /*
+            * Cette méthode permet d'ajouter une nouvelle demande de note de débit.
+            * Elle prend en paramètre un objet DemandeEntity contenant les informations de la demande.
+            * Elle génère également un PDF à partir des données fournies.
+            * 
+            * @param demande : L'objet DemandeEntity contenant les informations de la demande.
+            * @return : Tâche asynchrone qui retourne un tableau d'octets représentant le PDF généré.
+            * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
+        */
+        public async Task<List<byte[]>> AddDemandeAsync(DemandeEntity demande, DemandeDto demandeDto)
         {
+            // 1. Récupérer la dernière référence dans Depart (en tant qu'entier)
+            int lastRef = await _dbContext.Depart
+                .OrderByDescending(d => d.reference)
+                .Select(d => d.reference)
+                .FirstOrDefaultAsync();
+
+            int newReference = lastRef + 1;
+
+            // 2. Mise à jour de l'état de la prestation
+            /*
+                await _dbContext.Prestation
+                    .Where(x => x.id_prestation == demande.id_etat_decompte)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.statuspaiement, 3));
+            */
+            await _dbContext.Prestation
+                .Where(p => p.id_prestation == _dbContext.Etat_decompte
+                    .Where(e => e.id_etat_decompte == demande.id_etat_decompte)
+                    .Select(e => e.id_prestation)
+                    .FirstOrDefault())
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 3));            
+
+            // 3. Récupérer les infos pour créer le départ
+            var infos = await (from ed in _dbContext.Etat_decompte
+                            join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
+                            join c in _dbContext.Client on p.id_client equals c.id_client
+                            where ed.id_etat_decompte == demande.id_etat_decompte
+                            select new
+                            {
+                                ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
+                                NomClient = c.Nom,
+                            }).FirstOrDefaultAsync();
+
+            if (infos == null)
+                throw new Exception("Impossible de récupérer les informations liées à la demande.");
+
+            // 4. Récupérer l'identifiant du destinataire
+            int id_destinataire = await _dbContext.Destinataire
+                .Where(d => d.designation == "Département Administratif et Financier")
+                .Select(c => c.idDestinataire)
+                .FirstOrDefaultAsync();
+
+            // 5. Créer l’objet DepartEntity
+            var depart = new DepartEntity
+            {
+                reference = newReference,
+                objet = $"Demande d'Etablissement de note de débit {infos.ReferenceEtatDecompte} au nom de {infos.NomClient} d'un montant de {demande.montant} ar",
+                DateDepart = DateTime.Now,
+                idDestinataire = id_destinataire// tu dois avoir ça dans ta demande
+            };
+
+            // 6. Affecter la référence à la demande
+            demande.reference = newReference; // Mettre à jour la référence dans la demande
+
+            // 7. Enregistrer demande et départ
             await _dbContext.DemandeNoteDebit.AddAsync(demande);
-            await _dbContext.SaveChangesAsync();            
+            await _dbContext.Depart.AddAsync(depart);
+            await _dbContext.SaveChangesAsync();   
+
+            /*var infoTable = await (
+                from typeEchantillon in _dbContext.Type_echantillon
+                join echantillon in _dbContext.Echantillon on typeEchantillon.id_type_echantillon equals echantillon.id_type_echantillon
+                join prestation in _dbContext.Prestation on echantillon.id_prestation equals prestation.id_prestation
+                join etatDecompte in _dbContext.Etat_decompte on prestation.id_prestation equals etatDecompte.id_prestation
+                join detailEtatDecompte in _dbContext.details_etat_decompte on etatDecompte.id_etat_decompte equals detailEtatDecompte.id_etat_decompte
+                join typeTravaux in _dbContext.Type_travaux on detailEtatDecompte.id_type_travaux equals typeTravaux.id_type_travaux
+                where etatDecompte.id_etat_decompte == demande.id_etat_decompte && etatDecompte.date_etat_decompte.Date == DateTime.Today.Date// ← ton filtre ici
+                group detailEtatDecompte by new { typeTravaux.designation, detailEtatDecompte.prix_unitaire } into g
+                select new TravauxInfo
+                {
+                    Designation = g.Key.designation,
+                    Nombre = g.Count(),
+                    PrixUnitaire = g.Key.prix_unitaire,
+                }
+            ).ToListAsync();*/
+
+            var travauxInfos = await (
+                    from typeTravaux in _dbContext.Type_travaux
+                    join detailEtatDecompte in _dbContext.Details_etat_decompte 
+                        on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
+                    join etatDecompte in _dbContext.Etat_decompte 
+                        on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
+                    join prestation in _dbContext.Prestation 
+                        on etatDecompte.id_prestation equals prestation.id_prestation
+                    join echantillon in _dbContext.Echantillon 
+                        on prestation.id_prestation equals echantillon.id_prestation
+                    join typeEchantillon in _dbContext.Type_echantillon 
+                        on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
+                    join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
+                        on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
+                        equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
+                    where 
+                        etatDecompte.id_etat_decompte == demande.id_etat_decompte
+                        //prestation.id_prestation == 26
+                    group detailEtatDecompte by new 
+                    { 
+                        typeTravaux.designation, 
+                        detailEtatDecompte.prix_unitaire 
+                    } into g
+                    select new TravauxInfo
+                    {
+                        Designation = g.Key.designation,
+                        Nombre = g.Count(),
+                        PrixUnitaire = g.Key.prix_unitaire
+                    }).ToListAsync();
+
+            // 8. Générer le PDF
+            byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
+            byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
+
+            // Console.WriteLine($"PDF 1: {pdfBytes.Length} octets");
+            // Console.WriteLine($"PDF 2: {pdfBytes2.Length} octets");
+
+            List<byte[]> pdfBytesList = new List<byte[]>();
+            pdfBytesList.Add(pdfBytes);
+            pdfBytesList.Add(pdfBytes2);
+
+            return pdfBytesList;
         }
 
         // liste des demande de note de débit éffectuer
+        /*
+            * Cette méthode permet de récupérer toutes les demandes de note de débit effectuées.
+            * Elle effectue une jointure entre les tables Etat_decompte et DemandeNoteDebit.
+            * 
+            * @return : Tâche asynchrone qui retourne un objet ApiResponse contenant la liste des demandes.
+            *          ou un message d'erreur si aucune demande n'est trouvée.
+            * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
+        */
         public async Task<ApiResponse> GetAllDemandeAsync()
         {
+            /*
+                * Récupérer toutes les demandes de note de débit effectuées
+                * Effectuer une jointure entre les tables Etat_decompte et DemandeNoteDebit
+                * Trier les résultats par date de demande décroissante
+                * Retourner la liste des demandes sous forme d'ApiResponse
+            */
             var demandeList = await (
                 from etat_decompte in _dbContext.Etat_decompte
                 join demande in _dbContext.DemandeNoteDebit on etat_decompte.id_etat_decompte equals demande.id_etat_decompte
-                    select new DemandeDto
-                    {
-                        reference = demande.reference,
-                        dateDemande = demande.DateDemande,
-                        objet = demande.objet,
-                        montant = demande.montant,
-                        montant_literal = demande.MontantLiteral,
-                        referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
-                        date_etat_decompte = etat_decompte.date_etat_decompte,
-                        id_etat_decompte = etat_decompte.id_etat_decompte
-                    }).ToListAsync();
+                orderby demande.DateDemande descending
+                select new DemandeDto
+                {
+                    reference = demande.reference,
+                    dateDemande = demande.DateDemande,
+                    objet = demande.objet,
+                    montant = demande.montant,
+                    montant_literal = demande.MontantLiteral,
+                    referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
+                    date_etat_decompte = etat_decompte.date_etat_decompte,
+                    id_etat_decompte = etat_decompte.id_etat_decompte
+                }).ToListAsync();
 
             var rendu = new ApiResponse
             {
@@ -53,12 +192,30 @@ namespace LIMS_PaiementBack.Repositories
         }
 
         // affichage des informations de demande de note de débit suivant la procédure normal
+        /*
+            * Cette méthode permet de récupérer les informations de demande de note de débit
+            * en fonction de l'état de décompte spécifié.
+            * Elle effectue une jointure entre les tables Client, Prestation, Etat_decompte et Echantillon.
+            * 
+            * @param id_etat_decompte : L'identifiant de l'état de décompte.
+            * @return : Tâche asynchrone qui retourne un objet ApiResponse contenant la liste des demandes.
+            *          ou un message d'erreur si aucune demande n'est trouvée.
+            * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
+        */
         public async Task<ApiResponse> GetDemandesAsync(int id_etat_decompte)
         {
             var type = await _dbContext.Echantillon
                 .Where(e => e.prestation.EtatDecompte.id_etat_decompte == id_etat_decompte)
                 .GroupBy(e => e.typeEchantillon.designation)
                 .Select(g => g.Key) // Prend uniquement la designation
+                .ToListAsync();
+
+            var travaux = await _dbContext.Details_etat_decompte
+                .Where(d => d.EtatDecompte != null 
+                        && d.EtatDecompte.id_etat_decompte == id_etat_decompte
+                        && d.TypeTravaux != null)
+                .Select(d => d.TypeTravaux.designation)
+                .Distinct()
                 .ToListAsync();
 
             var demande = await (from client in _dbContext.Client
@@ -79,7 +236,8 @@ namespace LIMS_PaiementBack.Repositories
                     montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),// récuperation du montant réel à payer
                     nombreEchantillon = echantillonsGroup.Count(),
                     montant_literal = FonctionGlobalUtil.ConvertirMontantEnLettres(prestation.total_montant, prestation.remise),
-                    objet = FonctionGlobalUtil.GetObjetEchantillon(type)
+                    objet = FonctionGlobalUtil.GetObjetEchantillon(type),
+                    travaux = FonctionGlobalUtil.GetTravaux(travaux) // récuperation de la liste des travaux
                 }).ToListAsync();                      
 
             var result = new ApiResponse
@@ -94,13 +252,31 @@ namespace LIMS_PaiementBack.Repositories
         }
 
         // liste des demandes de note de débit à faire 
+        /*
+            * Cette méthode permet de récupérer la liste des demandes de note de débit à faire.
+            * Elle effectue une jointure entre les tables Etat_prestation, Prestation et Etat_decompte.
+            * Elle filtre les résultats pour ne garder que ceux dont l'état de prestation est égal à 2 dans statuspaiement.
+            * et les trie par date d'état de décompte décroissante.
+
+            * @return : Tâche asynchrone qui retourne un objet ApiResponse contenant la liste des demandes.
+            *          ou un message d'erreur si aucune demande n'est trouvée.
+            * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
+        */
         public async Task<ApiResponse> GetListeEtatDecomptePayer()
         {
+            // Récupération de la liste des demandes de note de débit à faire
+            // en effectuant une jointure entre les tables Etat_prestation, Prestation et Etat_decompte
             var liste = await (
-                from etat_prestation in _dbContext.Etat_prestation
-                join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
+                /*
+                    from etat_prestation in _dbContext.Etat_prestation
+                    join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
+                    join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
+                    where etat_prestation.id_etat_prestation == 3
+                */
+                from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where etat_prestation.id_etat_prestation == 2
+                where prestation.status_paiement == 2
+                orderby etat_decompte.date_etat_decompte descending
                 select new
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,
@@ -118,19 +294,34 @@ namespace LIMS_PaiementBack.Repositories
             };
         }
 
-        // vérification des demande de note de débit non éffectuer 
+        // vérification des demande de note de débit non éffectuer
+        /*
+            * Cette méthode permet de vérifier les demandes de note de débit non effectuées.
+            * Elle effectue une jointure entre les tables Prestation et Etat_decompte.
+            * Elle filtre les résultats pour ne garder que ceux dont l'état de prestation est égal à 2 dans statuspaiement.
+            * 
+            * @return : Tâche asynchrone qui retourne un objet ApiResponse contenant la liste des demandes.
+            *          ou un message d'erreur si aucune demande n'est trouvée.
+            * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
+        */
         public async Task<ApiResponse> GetVerificationAsync()
         {
             // Date fixe pour les tests, sinon utiliser DateTime.Today
-            //DateTime today = DateTime.Today;
-            DateTime today = new DateTime(2025, 01, 21);
+            DateTime today = DateTime.Today;
+            //DateTime today = new DateTime(2025, 01, 21);
 
             // 1️⃣ Récupérer les ID des EtatDecompte du jour
             var etatDecompteJour = await (
-                from etat_prestation in _dbContext.Etat_prestation
-                join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
+                /*
+                    from etat_prestation in _dbContext.Etat_prestation
+                    join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
+                    join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
+                    where etat_prestation.id_etat_prestation == 3 && etat_decompte.date_etat_decompte == today
+                */
+                from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where etat_prestation.niveau == 1 && etat_decompte.date_etat_decompte == today
+                where prestation.status_paiement == 2 && etat_decompte.date_etat_decompte == today
+                orderby etat_decompte.date_etat_decompte descending
                 select new
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,

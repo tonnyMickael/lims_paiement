@@ -20,7 +20,7 @@ namespace LIMS_PaiementBack.Controllers
             _depart = depart;
         }
 
-        [HttpGet("listeDemande")]
+        [HttpGet("listeDepart")]
         public async Task<IActionResult> GetDepartsDemande()
         {
             var departs = await _depart.GetAllDeparts();

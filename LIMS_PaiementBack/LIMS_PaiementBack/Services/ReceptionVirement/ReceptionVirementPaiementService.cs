@@ -8,12 +8,12 @@ namespace LIMS_PaiementBack.Services
     public class ReceptionVirementPaiementService : IReceptionVirementPaiementService
     {
         private readonly IReceptionVirementPaiementRepository _receptionVirementPaiementRepository;
-        private readonly Email _email;
+        //private readonly Email _email;
 
-        public ReceptionVirementPaiementService(IReceptionVirementPaiementRepository receptionVirementPaiementRepository, Email email)
+        public ReceptionVirementPaiementService(IReceptionVirementPaiementRepository receptionVirementPaiementRepository)
         {
             _receptionVirementPaiementRepository = receptionVirementPaiementRepository;
-            _email = email;
+            //_email = email;
         }
 
         public async Task AddVirementPaiementRecu(RecuDto recu)
@@ -37,6 +37,11 @@ namespace LIMS_PaiementBack.Services
         public async Task<ApiResponse> GetVirementAPayer()
         {
             return await _receptionVirementPaiementRepository.GetDataVirementAPayer();
+        }
+
+        public async Task<ApiResponse> GetVirementAConfirmer(int id_etat_decompte)
+        {
+            return await _receptionVirementPaiementRepository.GetVirementAConfirmerPayer(id_etat_decompte);
         }
     }
 }

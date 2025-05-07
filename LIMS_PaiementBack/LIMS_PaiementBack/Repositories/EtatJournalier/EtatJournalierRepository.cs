@@ -16,13 +16,32 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
             _dbContext = dbContext;
         }
 
+        /*
+            * Cette méthode récupère les états de compte journalier pour la date actuelle.
+            * Elle effectue plusieurs jointures entre les tables Etat_decompte, Prestation, Client et Paiement
+            * pour obtenir les informations nécessaires.
+            * 
+            * Elle vérifie également si l'état de compte existe déjà dans la table EtatJournalier avant de l'ajouter.
+            * 
+            * Enfin, elle retourne une liste d'objets EncaissementJournalierDto contenant les détails des encaissements.
+        */
         public async Task<ApiResponse> GetEtatJournalier()
         {
             try
             {
-                //var today = DateTime.Today;
-                var today = new DateTime(2025, 01, 20);
+                var today = DateTime.Today;
+                //var today = new DateTime(2025, 01, 20);
 
+                //valeur de paiement confirmer pour espece, mobile, virement
+                // var etatsVoulus = new[] { 21, 22, 23 };
+                var etatsVoulus = new[] { 31, 32, 33 };
+
+                /*
+                    * Récupérer les états de compte pour la date actuelle
+                    * Effectuer des jointures entre les tables Etat_decompte, Prestation, Client et Paiement
+                    * Filtrer les résultats en fonction de la date de paiement et de l'état de paiement
+                    * Vérifier si l'état de compte existe déjà dans la table EtatJournalier
+                */
                 var result = await _dbContext.Etat_decompte
                     .Where(etat => EF.Functions.DateDiffDay(etat.date_etat_decompte, today) == 0)
                     .Join(
@@ -44,7 +63,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                         (etatClient, paiement) => new { etatClient.Etat, etatClient.Client, Paiement = paiement }
                     )
                     .Where(joined =>
-                        joined.Paiement != null && EF.Functions.DateDiffDay(joined.Paiement.DatePaiement, today) == 0 && joined.Paiement.EtatPaiement == 22
+                        joined.Paiement != null && EF.Functions.DateDiffDay(joined.Paiement.DatePaiement, today) == 0 && etatsVoulus.Contains(joined.Paiement.EtatPaiement)
                     )
                     .ToListAsync();
 
@@ -73,15 +92,21 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                 {
                     await _dbContext.EtatJournalier.AddRangeAsync(nouveauxEtatsJournalier);
                     await _dbContext.SaveChangesAsync();
-                }
-
+                }                
+                
+                /*
+                    * Récupérer les états de compte journalier pour la date actuelle
+                    * Effectuer des jointures entre les tables Etat_decompte, Prestation, Client et Paiement
+                    * Filtrer les résultats en fonction de la date d'encaissement et de l'état de paiement
+                    * Retourner une liste d'objets EncaissementJournalierDto contenant les détails des encaissements
+                */
                 var listeJournalier = await (
                     from etat_journalier in _dbContext.EtatJournalier
                     join etat_Decompte in _dbContext.Etat_decompte on etat_journalier.id_etat_decompte equals etat_Decompte.id_etat_decompte
                     join paiement in _dbContext.Paiement on etat_Decompte.id_etat_decompte equals paiement.id_etat_decompte
                     join prestation in _dbContext.Prestation on etat_Decompte.id_prestation equals prestation.id_prestation
                     join client in _dbContext.Client on prestation.id_client equals client.id_client
-                    where paiement.EtatPaiement == 22 && etat_journalier.DateEncaissement == today
+                    where etatsVoulus.Contains(paiement.EtatPaiement) && etat_journalier.DateEncaissement == today
                     select new EncaissementJournalierDto {
                         dateEncaissement = etat_journalier.DateEncaissement,
                         EtatDecompte = etat_Decompte.ReferenceEtatDecompte,

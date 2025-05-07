@@ -1,9 +1,9 @@
-﻿using LIMS_PaiementBack.Models;
-using LIMS_PaiementBack.Services;
+﻿using System.Reflection;
 using LIMS_PaiementBack.Utils;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
+using LIMS_PaiementBack.Models;
+using Microsoft.AspNetCore.Http;
+using LIMS_PaiementBack.Services;
 
 namespace LIMS_PaiementBack.Controllers
 {
@@ -43,6 +43,13 @@ namespace LIMS_PaiementBack.Controllers
             };
 
             return Ok(reponse);
+        }
+
+        [HttpGet("VirementListe")]
+        public async Task<IActionResult> GetAllVirementApayer()
+        {
+            var response = await _virementPaiement.GetListeVirementApayerAsync();
+            return Ok(response);
         }
     }
 }

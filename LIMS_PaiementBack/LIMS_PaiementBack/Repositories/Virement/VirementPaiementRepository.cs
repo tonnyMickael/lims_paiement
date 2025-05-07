@@ -1,6 +1,6 @@
-﻿using LIMS_PaiementBack.Entities;
+﻿using LIMS_PaiementBack.Utils;
 using LIMS_PaiementBack.Models;
-using LIMS_PaiementBack.Utils;
+using LIMS_PaiementBack.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace LIMS_PaiementBack.Repositories
@@ -44,6 +44,33 @@ namespace LIMS_PaiementBack.Repositories
             {
                 Data = information,
                 Message = "succes",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+        }
+
+        public async Task<ApiResponse> GetListeVirementApayer()
+        {
+            var virementListe = await (
+                from client in _dbContext.Client
+                join prestation in _dbContext.Prestation on client.id_client equals prestation.id_client
+                join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
+                join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
+                where paiement.ModePaiement == 3 && paiement.EtatPaiement == 13
+                orderby paiement.idPaiement descending
+                select new PaiementDto
+                {
+                    id_etat_decompte = etat_decompte.id_etat_decompte,
+                    clients = client.Nom,
+                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                    DatePaiement = paiement.DatePaiement ?? default(DateTime),
+                    etatDecompte = etat_decompte.ReferenceEtatDecompte
+                } 
+            ).ToListAsync();
+
+            return new ApiResponse {
+                Data = virementListe,
+                Message = virementListe.Any() ? "succès" : "échec",
                 IsSuccess = true,
                 StatusCode = 200
             };

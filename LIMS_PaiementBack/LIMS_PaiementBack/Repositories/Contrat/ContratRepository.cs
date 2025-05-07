@@ -8,7 +8,7 @@ namespace LIMS_PaiementBack.Repositories
 {
     public class ContratRepository : IContratRepository
     {
-        private readonly DbContextEntity _dbContext;
+        /*private readonly DbContextEntity _dbContext;
 
         public ContratRepository(DbContextEntity dbContext)
         {
@@ -36,7 +36,7 @@ namespace LIMS_PaiementBack.Repositories
 
             var idPaiement = paiement.idPaiement;
 
-            await _dbContext.SousContrat.AddAsync(souscontrat);
+            await _dbContext.SousContrats.AddAsync(souscontrat);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -147,6 +147,6 @@ namespace LIMS_PaiementBack.Repositories
 
             // 5️⃣ Sauvegarder les modifications
             await _dbContext.SaveChangesAsync();
-        }
+        }*/
     }
 }

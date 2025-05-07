@@ -25,12 +25,23 @@ namespace LIMS_PaiementBack.Controllers
             {
                 return BadRequest("Les données de la demande sont invalides.");
             }                  
-            await _service.AddDemandeAsync(demande);
+            
+            var pdfURL = await _service.AddDemandeAsync(demande);
+
+            var pdfBase64List = pdfURL.Select(pdf => Convert.ToBase64String(pdf)).ToList();
+            foreach (var base64 in pdfBase64List)
+            {
+                Console.WriteLine("Controller back:"+base64);
+            }
 
             var reponse = new ApiResponse
             {
-                Data = demande,
-                Message = "nouvelle demande ajouter avc succès",
+                Data = new
+                {
+                    Demande = demande,
+                    PdfBase64 = pdfBase64List
+                },
+                Message = "Nouvelle demande ajoutée avec succès",
                 IsSuccess = true,
                 StatusCode = 200
             };

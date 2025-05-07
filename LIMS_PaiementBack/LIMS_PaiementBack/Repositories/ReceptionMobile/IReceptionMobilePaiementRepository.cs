@@ -7,5 +7,6 @@ namespace LIMS_PaiementBack.Repositories
     {
         Task AddRecuMobilePaiement(ReceptionMobileEntity recu);
         Task<ApiResponse> GetDataMobileAPayer();
+        Task<ApiResponse> GetMobileAConfirmerPayer();
     }
 }

@@ -8,19 +8,20 @@ namespace LIMS_PaiementBack.Services
     public class ReceptionMobilePaiementService : IReceptionMobilePaiementService
     {
         private readonly IReceptionMobilePaiementRepository _receptionMobilePaiementRepository;
-        private readonly Email _email;
+        //private readonly Email _email;
 
-        public ReceptionMobilePaiementService(IReceptionMobilePaiementRepository receptionMobilePaiementRepository, Email email)
+        public ReceptionMobilePaiementService(IReceptionMobilePaiementRepository receptionMobilePaiementRepository)
         {
             _receptionMobilePaiementRepository = receptionMobilePaiementRepository;
-            _email = email;
+            //_email = email;
         }
 
         public async Task AddMobilePaiementRecu(RecuDto recu)
         {
             var recepeiton = new ReceptionMobileEntity
             {
-                referencce = recu.referenceMobile,
+                Reference = recu.referenceMobile,
+                operateurmobile = recu.operateurmobile,
                 idPaiement = recu.id_paiement
             };
 
@@ -36,6 +37,11 @@ namespace LIMS_PaiementBack.Services
         public async Task<ApiResponse> GetMobileAPayer()
         {
             return await _receptionMobilePaiementRepository.GetDataMobileAPayer();
+        }
+
+        public async Task<ApiResponse> GetMobileAConfirmer()
+        {
+            return await _receptionMobilePaiementRepository.GetMobileAConfirmerPayer();
         }
     }
 }

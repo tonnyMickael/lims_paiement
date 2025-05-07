@@ -9,6 +9,6 @@ namespace LIMS_PaiementBack.Entities
        // public string designation {  get; set; } = string.Empty;
         public string designation {  get; set; } = string.Empty;
 
-        public List<DepartEntity> departs { get; set; }
+        public List<DepartEntity> departs { get; set; } = new List<DepartEntity>();
     }
 }
