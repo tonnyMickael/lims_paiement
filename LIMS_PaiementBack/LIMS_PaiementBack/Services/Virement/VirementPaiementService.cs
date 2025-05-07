@@ -1,7 +1,7 @@
-﻿using LIMS_PaiementBack.Entities;
+﻿using LIMS_PaiementBack.Utils;
 using LIMS_PaiementBack.Models;
+using LIMS_PaiementBack.Entities;
 using LIMS_PaiementBack.Repositories;
-using LIMS_PaiementBack.Utils;
 
 namespace LIMS_PaiementBack.Services
 {
@@ -33,6 +33,11 @@ namespace LIMS_PaiementBack.Services
         public async Task<ApiResponse> GetInfoVirementPaiement(int id_etat_decompte)
         {
             return await _virementPaiementRepository.GetDataPaiementVirement(id_etat_decompte);
+        }
+
+        public async Task<ApiResponse> GetListeVirementApayerAsync()
+        {
+            return await _virementPaiementRepository.GetListeVirementApayer();
         }
     }
 }

@@ -7,5 +7,6 @@ namespace LIMS_PaiementBack.Repositories
     {
         Task AddRecuEspecePaiement(ReceptionEspeceEntity recu);
         Task<ApiResponse> GetDataEspeceAPayer();
+        Task<ApiResponse> GetEspeceAConfirmerPayer();
     }
 }

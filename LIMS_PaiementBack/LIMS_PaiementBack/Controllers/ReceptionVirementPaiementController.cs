@@ -44,5 +44,12 @@ namespace LIMS_PaiementBack.Controllers
 
             return Ok(reponse);
         }
+
+        [HttpGet("AConfirmer/{id_etat_decompte}")]
+        public async Task<IActionResult> GetVirementAConfirmer(int id_etat_decompte) 
+        {
+            var virementAConfirmer = await _receptionVirementPaiement.GetVirementAConfirmer(id_etat_decompte);
+            return Ok(virementAConfirmer);
+        }
     }
 }

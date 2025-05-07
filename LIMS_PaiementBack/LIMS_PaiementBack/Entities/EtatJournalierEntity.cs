@@ -12,7 +12,7 @@ namespace LIMS_PaiementBack.Entities
         public int id_etat_decompte { get; set; }
 
         [ForeignKey(nameof(id_etat_decompte))]
-        public EtatDecompteEntity etatDecompte { get; set; }
-        public List<EtatHebdomadaireEntity> hebdomadaires { get; set; }
+        public EtatDecompteEntity? etatDecompte { get; set; }
+        public List<EtatHebdomadaireEntity> hebdomadaires { get; set; } = new List<EtatHebdomadaireEntity>();
     }
 }

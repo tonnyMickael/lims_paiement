@@ -2,7 +2,7 @@
 {
     public class ContratDto
     {
-        //attribut partenaire
+        /*//attribut partenaire
         public string? nomEntreprise { get; set; }
         public int etat { get; set; }
         
@@ -12,6 +12,6 @@
         public DateTime datePaiement { get; set; }
         
         //attribut commun
-        public int idPartenaire { get; set; }
+        public int idPartenaire { get; set; }*/
     }
 }

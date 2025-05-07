@@ -18,5 +18,6 @@ namespace LIMS_PaiementBack.Entities
         //propriete de naviagation
         // Un client peut avoir plusieurs prestations (0-n)
         public ICollection<PrestationEntity> Prestations { get; set; } = new List<PrestationEntity>();
+        // public ICollection<SousContratEntity> sousContrat { get; set; } = new List<SousContratEntity>();
     }
 }

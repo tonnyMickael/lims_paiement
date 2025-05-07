@@ -9,5 +9,8 @@ namespace LIMS_PaiementBack.Entities
         public string? designation { get; set; }
 
         public ICollection<EchantillonEntity> Echantillons { get; set; } = new List<EchantillonEntity>();
+        //public ICollection<TypeTravauxEntity> TypeTravaux { get; set; } = new List<TypeTravauxEntity>();
+        public ICollection<Type_travaux_type_echantillonEntity> TypeTravauxTypeEchantillons { get; set; } = new List<Type_travaux_type_echantillonEntity>();
+
     }
 }

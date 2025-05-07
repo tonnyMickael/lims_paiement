@@ -7,5 +7,6 @@ namespace LIMS_PaiementBack.Services
     {
         Task<ApiResponse> GetEspeceAPayer();
         Task AddEspecePaiementRecu(RecuDto recu);
+        Task<ApiResponse> GetEspeceAConfirmer();
     }
 }

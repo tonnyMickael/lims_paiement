@@ -12,6 +12,6 @@ namespace LIMS_PaiementBack.Entities
         public int idPaiement { get; set; }
 
         [ForeignKey(nameof(idPaiement))]
-        public PaiementEntity Paiement { get; set; }
+        public PaiementEntity? Paiement { get; set; }
     }
 }
