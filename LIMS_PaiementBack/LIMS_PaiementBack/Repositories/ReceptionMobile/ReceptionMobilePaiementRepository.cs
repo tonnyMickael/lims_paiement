@@ -127,5 +127,71 @@ namespace LIMS_PaiementBack.Repositories
                 StatusCode = 200
             };
         }
+
+        public async Task<ApiResponse> GetMobileOperateur(){
+
+            // Récupération des 4 dernières semaines (par date de début descendante)
+            var semaines = await _dbContext.Semaine
+                .OrderByDescending(s => s.DebutSemaine)
+                .Take(4)
+                .ToListAsync();
+            
+            List<SemaineDto> semaineDtos = new List<SemaineDto>();
+
+            foreach (var semaine in semaines)
+            {
+                semaineDtos.Add(new SemaineDto
+                {
+                    debutSemaine = semaine.DebutSemaine,
+                    finSemaine = semaine.FinSemaine,
+                });
+            }
+
+            if (!semaines.Any())
+            {
+                return new ApiResponse
+                {
+                    Message = "Aucune semaine trouvée.",
+                    IsSuccess = false,
+                    StatusCode = 404
+                };
+            }
+            
+            var dateDebutGlobale = semaines.Min(s => s.DebutSemaine.Date);
+            var dateFinGlobale = semaines.Max(s => s.FinSemaine.Date);
+
+            var paiementParOperateur = await (
+                from receptionMobile in _dbContext.ReceptionMobile
+                join paiement in _dbContext.Paiement on receptionMobile.idPaiement equals paiement.idPaiement
+                join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
+                join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
+                where paiement.DatePaiement >= dateDebutGlobale
+                      && paiement.DatePaiement <= dateFinGlobale
+                group new { paiement, receptionMobile, prestation } by new
+                {
+                    Date = paiement.DatePaiement.Value.Date,
+                    Operateur = receptionMobile.operateurmobile // remplace par ton vrai champ
+                } into g
+                orderby g.Key.Date descending
+                select new DetailMobileDto
+                {
+                    Date = g.Key.Date,
+                    Operateur = g.Key.Operateur,
+                    NombrePaiements = g.Count(),
+                    MontantTotal = g.Sum(x => (double)x.prestation.total_montant * (1 - x.prestation.remise / 100.0)) // remplace par ton vrai champ
+                }).ToListAsync();
+
+            return new ApiResponse
+            {
+                Data = new DashboardDetailMobileDto
+                {
+                    Semaines = semaineDtos,
+                    Details = paiementParOperateur
+                },
+                Message = "succes",
+                IsSuccess = true,
+                StatusCode = 200
+            };
+        }
     }
 }

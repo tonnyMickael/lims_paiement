@@ -5,13 +5,13 @@ namespace LIMS_PaiementBack.Entities
 {
     public class ContratPartenaireEntity
     {
-        [Key]
+        /*[Key]
         public int idContratPartenaire { get; set; }
         public string referenceContrat { get; set; } = string.Empty;
         public DateTime datePaiement { get; set; }
         public int idPartenaire { get; set; }
 
         [ForeignKey(nameof(idPartenaire))]
-        public PartenaireEntity? partenaire { get; set; }
+        public PartenaireEntity? partenaire { get; set; }*/
     }
 }

@@ -14,7 +14,6 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<TypeTravauxEntity> Type_travaux { get; set; }
         public DbSet<DestinataireEntity> Destinataire { get; set; }
         public DbSet<EtatDecompteEntity> Etat_decompte { get; set; }
-        // public DbSet<EtatPrestationEntity> Etat_prestation { get; set; }
         public DbSet<TypeEchantillonEntity> Type_echantillon { get; set; }
         public DbSet<Details_etat_decompte_Entity> Details_etat_decompte { get; set; }
         public DbSet<Type_travaux_type_echantillonEntity> Type_travaux_type_echantillon { get; set; }
@@ -23,7 +22,6 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<SemaineEntity> Semaine { get; set; }
         public DbSet<PaiementEntity> Paiement { get; set; }
         public DbSet<DelaiEntity> DelaiPaiement { get; set; }
-        //public DbSet<PartenaireEntity> Partenaire { get; set; }
         public DbSet<SousContratEntity> SousContrats { get; set; }
         public DbSet<DemandeEntity> DemandeNoteDebit { get; set; }
         public DbSet<EtatJournalierEntity> EtatJournalier { get; set; }
@@ -31,8 +29,10 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<ReceptionEspeceEntity> ReceptionEspece { get; set; }
         public DbSet<ReceptionMobileEntity> ReceptionMobile { get; set; }
         public DbSet<EtatHebdomadaireEntity> EtatHebdomadaire { get; set; }
-        // public DbSet<ContratPartenaireEntity> ContratPartenaire {  get; set; }
 
+        // public DbSet<EtatPrestationEntity> Etat_prestation { get; set; }
+        //public DbSet<PartenaireEntity> Partenaire { get; set; }
+        // public DbSet<ContratPartenaireEntity> ContratPartenaire {  get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,10 +44,11 @@ namespace LIMS_PaiementBack.Entities
             modelBuilder.Entity<TypeTravauxEntity>().ToTable("Type_travaux");
             modelBuilder.Entity<DestinataireEntity>().ToTable("Destinataire");
             modelBuilder.Entity<EtatDecompteEntity>().ToTable("Etat_decompte");
-            //modelBuilder.Entity<EtatPrestationEntity>().ToTable("Etat_prestation");
             modelBuilder.Entity<TypeEchantillonEntity>().ToTable("Type_echantillon");
             modelBuilder.Entity<Details_etat_decompte_Entity>().ToTable("Details_etat_decompte");
             modelBuilder.Entity<Type_travaux_type_echantillonEntity>().ToTable("Type_travaux_type_echantillon").HasKey(e => new { e.id_type_echantillon, e.id_type_travaux });
+            
+            //modelBuilder.Entity<EtatPrestationEntity>().ToTable("Etat_prestation");
 
             //nouvelle relation
             modelBuilder.Entity<DemandeEntity>()
@@ -97,30 +98,33 @@ namespace LIMS_PaiementBack.Entities
                 .WithMany(m => m.receptionMobiles)
                 .HasForeignKey(e => e.idPaiement)
                 .OnDelete(DeleteBehavior.Restrict);
+                
+            /*
+                // modelBuilder.Entity<SousContratEntity>()
+                //     .HasOne(e => e.paiement)
+                //     .WithMany(m => m.sousContrat)
+                //     .HasForeignKey(e => e.idPaiement)
+                //     .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<SousContratEntity>()
-                .HasOne(e => e.paiement)
-                .WithMany(m => m.sousContrat)
-                .HasForeignKey(e => e.idPaiement)
-                .OnDelete(DeleteBehavior.Restrict);
+                // modelBuilder.Entity<SousContratEntity>()
+                //     .HasOne(e => e.partenaire)
+                //     .WithMany(m => m.sousContrat)
+                //     .HasForeignKey(e => e.idPartenaire)
+                //     .OnDelete(DeleteBehavior.Restrict);
 
-            // modelBuilder.Entity<SousContratEntity>()
-            //     .HasOne(e => e.partenaire)
-            //     .WithMany(m => m.sousContrat)
-            //     .HasForeignKey(e => e.idPartenaire)
-            //     .OnDelete(DeleteBehavior.Restrict);
+                // modelBuilder.Entity<SousContratEntity>()
+                //     .HasOne(e => e.client)
+                //     .WithMany(m => m.sousContrat)
+                //     .HasForeignKey(e => e.id_client)
+                //     .OnDelete(DeleteBehavior.Restrict);
 
-            // modelBuilder.Entity<SousContratEntity>()
-            //     .HasOne(e => e.client)
-            //     .WithMany(m => m.sousContrat)
-            //     .HasForeignKey(e => e.id_client)
-            //     .OnDelete(DeleteBehavior.Restrict);
-
-            // modelBuilder.Entity<ContratPartenaireEntity>()
-            //     .HasOne(e => e.partenaire)
-            //     .WithMany(m => m.contrat)
-            //     .HasForeignKey(e => e.idPartenaire)
-            //     .OnDelete(DeleteBehavior.Restrict);
+                // modelBuilder.Entity<ContratPartenaireEntity>()
+                //     .HasOne(e => e.partenaire)
+                //     .WithMany(m => m.contrat)
+                //     .HasForeignKey(e => e.idPartenaire)
+                //     .OnDelete(DeleteBehavior.Restrict);
+                // modelBuilder.Entity<ContratPartenaireEntity>()
+            */
 
             modelBuilder.Entity<EtatHebdomadaireEntity>()
                 .HasOne(e => e.semaine)

@@ -51,5 +51,12 @@ namespace LIMS_PaiementBack.Controllers
             var mobileAConfirmer = await _receptionMobilePaiement.GetMobileAConfirmer();
             return Ok(mobileAConfirmer);
         }
+    
+        [HttpGet("Operateur")]
+        public async Task<IActionResult> GetMobileOperateur()
+        {
+            var mobileOperateur = await _receptionMobilePaiement.GetMobileOperateurAsync();
+            return Ok(mobileOperateur);
+        }
     }
 }

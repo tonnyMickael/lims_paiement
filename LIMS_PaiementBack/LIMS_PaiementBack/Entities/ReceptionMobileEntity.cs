@@ -7,7 +7,7 @@ namespace LIMS_PaiementBack.Entities
     {
         [Key]
         public int idReceptionMobile { get; set; }
-        public int Reference { get; set; }
+        public string Reference { get; set; } = string.Empty;
         public string? operateurmobile { get; set; }
         public int idPaiement { get; set; }
 
