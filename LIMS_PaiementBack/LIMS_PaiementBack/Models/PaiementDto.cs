@@ -19,7 +19,7 @@
         public int EtatPaiement { get; set; }
         public string? nomPayant { get; set; }
         public string? prenomPayant { get; set; }
-        public int contactdupayant { get; set; }
+        public string? contactdupayant { get; set; }
 
         //attribut commun
         public int id_etat_decompte { get; set; }

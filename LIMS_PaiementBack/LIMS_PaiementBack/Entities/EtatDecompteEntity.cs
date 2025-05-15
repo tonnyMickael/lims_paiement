@@ -8,6 +8,7 @@ namespace LIMS_PaiementBack.Entities
         [Key]
         public int id_etat_decompte { get; set; }
         public int id_prestation { get; set; }
+        [Column("reference")]
         public string ReferenceEtatDecompte { get; set; } = string.Empty;
         public DateTime date_etat_decompte { get; set; }
 
@@ -15,6 +16,8 @@ namespace LIMS_PaiementBack.Entities
         public PrestationEntity? prestattion {  get; set; }
 
         public ICollection<Details_etat_decompte_Entity> DetailsEtatDecompte { get; set; } = new List<Details_etat_decompte_Entity>(); // Relation inverse
+        public decimal total_montant { get; set; }
+        public double remise { get; set; }
 
     }
 }

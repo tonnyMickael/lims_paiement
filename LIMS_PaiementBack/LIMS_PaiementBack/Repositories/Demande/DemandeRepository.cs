@@ -233,9 +233,9 @@ namespace LIMS_PaiementBack.Repositories
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     datePaiement = DateTime.Now,
                     id_etat_decompte = etatDecompte.id_etat_decompte,
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),// récuperation du montant réel à payer
+                    montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),// récuperation du montant réel à payer
                     nombreEchantillon = echantillonsGroup.Count(),
-                    montant_literal = FonctionGlobalUtil.ConvertirMontantEnLettres(prestation.total_montant, prestation.remise),
+                    montant_literal = FonctionGlobalUtil.ConvertirMontantEnLettres(etatDecompte.total_montant, etatDecompte.remise),
                     objet = FonctionGlobalUtil.GetObjetEchantillon(type),
                     travaux = FonctionGlobalUtil.GetTravaux(travaux) // récuperation de la liste des travaux
                 }).ToListAsync();                      
@@ -282,7 +282,7 @@ namespace LIMS_PaiementBack.Repositories
                     id_etat_decompte = etat_decompte.id_etat_decompte,
                     referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
                     date_etat_decompte = etat_decompte.date_etat_decompte,
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise)// récuperation du montant réel à payer
+                    montant = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise)// récuperation du montant réel à payer
                 }).ToListAsync();
 
             return new ApiResponse
@@ -327,7 +327,7 @@ namespace LIMS_PaiementBack.Repositories
                     id_etat_decompte = etat_decompte.id_etat_decompte,
                     referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
                     date_etat_decompte = etat_decompte.date_etat_decompte,
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise)
+                    montant = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise)
                 }).ToListAsync();
 
             if (!etatDecompteJour.Any())

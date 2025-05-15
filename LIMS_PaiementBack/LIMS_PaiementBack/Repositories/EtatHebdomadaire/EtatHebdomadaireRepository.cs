@@ -142,7 +142,7 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
                     dateEncaissement = EtatJournalier.DateEncaissement,    // Date du versement
                     EtatDecompte = etatDecompte.ReferenceEtatDecompte,    // Référence de l'état de décompte
                     clients = client.Nom,                                // Nom du client
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise), // Montant après remise
+                    montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise), // Montant après remise
                     observation = EtatJournalier.Observation    // Observations diverses
                 }).ToListAsync(); // Exécute la requête de manière asynchrone
 

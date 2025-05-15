@@ -14,10 +14,10 @@ namespace LIMS_PaiementBack.Utils
     public class FonctionGlobalUtil
     {
         // prendre l'identité du client
-        public static string GetClientIdentity(string CIN, string Passport)
+        public static string GetClientIdentity(string? CIN, string? Passport)
         {
             // Retourne le CIN si disponible, sinon le Passport, sinon "Aucune identité"
-            return !string.IsNullOrEmpty(CIN) ? CIN : (Passport ?? "Aucune identité");
+            return !string.IsNullOrEmpty(CIN) ? CIN : (!string.IsNullOrEmpty(Passport) ? Passport : "Aucune identité");
         }
 
         //calcul du montant réel avec la remise 
@@ -85,14 +85,14 @@ namespace LIMS_PaiementBack.Utils
 
                         col.Item().Element(container =>
                         {
-                            container.PaddingBottom(15).Text("Objet : Demande d’établissement de Note de Débit")
+                            container.PaddingBottom(15).Text("Objet : Demande d'établissement de Note de Débit")
                                 .Bold()
                                 .Underline();
                         });
                             
                         col.Item().Text(text =>
                         {
-                            text.Span("   Veuillez établir la note de Débit correspondant à l’état de décompte de prestation ");
+                            text.Span("   Veuillez établir la note de Débit correspondant à l'état de décompte de prestation ");
                             text.Span($"{demande.etatDecompte}").Bold();
                             text.Span(" ci-joint, pour ");
                             text.Span($"{demande.travaux}").Bold();

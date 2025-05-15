@@ -34,8 +34,8 @@ namespace LIMS_PaiementBack.Repositories
                     email = client.Email,
                     adresse = client.Adresse,
                     contact = client.Contact,
-                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN, client.Passport),
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""),
+                    montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     id_etat_decompte = id_etat_decompte
                 }).ToListAsync();
@@ -44,8 +44,8 @@ namespace LIMS_PaiementBack.Repositories
             {
                 Data = information,
                 Message = "succes",
+                StatusCode = 200,
                 IsSuccess = true,
-                StatusCode = 200
             };
         }
     }

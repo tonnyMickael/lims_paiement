@@ -35,7 +35,7 @@ namespace LIMS_PaiementBack.Repositories
                     adresse = client.Adresse,
                     contact = client.Contact,
                     identite = FonctionGlobalUtil.GetClientIdentity(client.CIN, client.Passport),
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                    montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     id_etat_decompte = id_etat_decompte
                 }).ToListAsync();

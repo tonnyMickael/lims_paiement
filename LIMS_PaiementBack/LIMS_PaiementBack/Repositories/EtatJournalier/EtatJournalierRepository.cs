@@ -111,7 +111,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                         dateEncaissement = etat_journalier.DateEncaissement,
                         EtatDecompte = etat_Decompte.ReferenceEtatDecompte,
                         clients = client.Nom,
-                        montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                        montant = FonctionGlobalUtil.MontantReel(etat_Decompte.total_montant, etat_Decompte.remise),
                         observation = etat_journalier.Observation
                     }).ToListAsync();
 

@@ -9,8 +9,9 @@ namespace LIMS_PaiementBack.Entities
         public int id_prestation { get; set; }
         public int id_client { get; set; }
         public int id_etat_prestation { get; set; }
-        public decimal total_montant { get; set; }
-        public double remise { get; set; }
+        // public decimal total_montant { get; set; }
+        // public double remise { get; set; }
+        [Column("statut_paiement")]
         public int status_paiement { get; set; } // 1 = non payé, 2 = payé, 3 = payé et demande effectuée
 
         [ForeignKey(nameof(id_client))]
