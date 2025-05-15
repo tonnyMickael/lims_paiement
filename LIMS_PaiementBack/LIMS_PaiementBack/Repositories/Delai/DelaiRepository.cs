@@ -279,7 +279,7 @@ namespace LIMS_PaiementBack.Repositories
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,
                     nomClient = client.Nom,
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),    
+                    montant = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise),    
                     referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
                     date_etat_decompte = etat_decompte.date_etat_decompte,
                     datePaiement = paiement.DatePaiement,
@@ -380,7 +380,7 @@ namespace LIMS_PaiementBack.Repositories
                 where (paiement.EtatPaiement == 31 || paiement.EtatPaiement == 32)
                     && delai.DateFinDelai >= prochainLundi
                     && delai.DateFinDelai <= prochainVendredi
-                group new { delai, prestation } by delai.DateFinDelai.Date into g
+                group new { delai, etat_decompte } by delai.DateFinDelai.Date into g
                 orderby g.Key
                 select new DashboardDelaiDto
                 {
@@ -389,10 +389,10 @@ namespace LIMS_PaiementBack.Repositories
                     nombreEnMobile = g.Count(x => x.delai.ModePaiement == 2),
                     montantEnEspece = g
                         .Where(x => x.delai.ModePaiement == 1)
-                        .Sum(x => (double)(x.prestation.total_montant) * (1 - x.prestation.remise / 100.0)),
+                        .Sum(x => (double)(x.etat_decompte.total_montant) * (1 - x.etat_decompte.remise / 100.0)),
                     montantEnMobile = g
                         .Where(x => x.delai.ModePaiement == 2)
-                        .Sum(x => (double)(x.prestation.total_montant) * (1 - x.prestation.remise / 100.0))
+                        .Sum(x => (double)(x.etat_decompte.total_montant) * (1 - x.etat_decompte.remise / 100.0))
                 }).ToListAsync();
 
             return new ApiResponse 
@@ -410,13 +410,13 @@ namespace LIMS_PaiementBack.Repositories
                 from etat_decompte in _dbContext.Etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                where prestation.status_paiement == 1 
+                where prestation.status_paiement == 1 && client.IsInterne == true
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,
                     clients = client.Nom,
-                    montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                    montant = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise),
                     etatDecompte = etat_decompte.ReferenceEtatDecompte,
                     DatePaiement = etat_decompte.date_etat_decompte
                 }).ToListAsync();

@@ -81,12 +81,12 @@ namespace LIMS_PaiementBack.Repositories
                 where paiement.ModePaiement == 2 && paiement.EtatPaiement == 22
                         && paiement.DatePaiement >= dateDebutGlobale
                         && paiement.DatePaiement <= dateFinGlobale
-                group new { paiement, prestation } by (paiement.DatePaiement != null ? paiement.DatePaiement.Value.Date : DateTime.MinValue) into g
+                group new { paiement, etat_decompte } by (paiement.DatePaiement != null ? paiement.DatePaiement.Value.Date : DateTime.MinValue) into g
                 select new RecuDto
                 {
                     Date = g.Key,
                     NombrePaiement = g.Count(),
-                    MontantTotal = g.Sum(x => (double)x.prestation.total_montant * (1 - x.prestation.remise / 100.0)),
+                    MontantTotal = g.Sum(x => (double)x.etat_decompte.total_montant * (1 - x.etat_decompte.remise / 100.0)),
                 }).OrderBy(x => x.Date).ToListAsync();
 
             return new ApiResponse
@@ -115,7 +115,7 @@ namespace LIMS_PaiementBack.Repositories
                 select new RecuDto
                 {
                     referenceEtatDecompte = etat_decompte.ReferenceEtatDecompte,
-                    montantApayer = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                    montantApayer = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise),
                     id_paiement = paiement.idPaiement
                 }).FirstOrDefaultAsync();
 

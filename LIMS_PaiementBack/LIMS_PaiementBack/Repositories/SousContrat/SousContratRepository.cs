@@ -74,7 +74,7 @@ namespace LIMS_PaiementBack.Repositories
                         id_etat_decompte = etatDecompte.id_etat_decompte,
                         clients = client.Nom,
                         ref_contrat = client.ref_contrat,
-                        montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                        montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),
                         etatDecompte = etatDecompte.ReferenceEtatDecompte,
                         DatePaiement = paiement.DatePaiement ?? default(DateTime)
 
@@ -118,7 +118,7 @@ namespace LIMS_PaiementBack.Repositories
                     {                        
                         clients = client.Nom,                        
                         contact = client.Contact,                  
-                        montant = FonctionGlobalUtil.MontantReel(prestation.total_montant, prestation.remise),
+                        montant = FonctionGlobalUtil.MontantReel(etat_decompte.total_montant, etat_decompte.remise),
                         etatDecompte = etat_decompte.ReferenceEtatDecompte,
                         DatePaiement = paiement.DatePaiement ?? default(DateTime),  
                         prenomPayant = paiement.prenomDuPayant,

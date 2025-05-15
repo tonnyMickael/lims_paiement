@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
@@ -6,13 +7,21 @@ namespace LIMS_PaiementBack.Entities
     {
         [Key]
         public int id_client { get; set; }
+        [Column("nom")]
         public string Nom { get; set; } = string.Empty;
+        [Column("adresse")]
         public string Adresse { get; set; } = string.Empty;
+        [Column("cin")]
         public string CIN { get; set; } = string.Empty;
+        [Column("passeport")]
         public string Passport { get; set; } = string.Empty;
+        [Column("email")]
         public string Email { get; set; } = string.Empty;
+        [Column("contact")]
         public string Contact { get; set; } = string.Empty;
+        [Column("ref_contrat")]
         public string ref_contrat { get; set; } = string.Empty;
+        [Column("isInterne")]
         public bool IsInterne { get; set; }
 
         //propriete de naviagation
