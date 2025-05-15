@@ -6,7 +6,7 @@
         public double montantRecu { get; set; }
         
         //reception mobile 
-        public int referenceMobile { get; set; }
+        public string referenceMobile { get; set; } = string.Empty;
         public string? operateurmobile { get; set; }
 
         //reception virement

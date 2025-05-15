@@ -12,7 +12,7 @@ namespace LIMS_PaiementBack.Entities
         public int EtatPaiement { get; set; }
         public string? nomDuPayant { get; set; }
         public string? prenomDuPayant { get; set; }
-        public int contactdupayant { get; set; }
+        public string? contactdupayant { get; set; }
         public int id_etat_decompte { get; set; }
 
         [ForeignKey(nameof(id_etat_decompte))]

@@ -66,6 +66,6 @@ namespace LIMS_PaiementBack.Controllers
             };
 
             return Ok(reponse);
-        }     
+        }
     }
 }

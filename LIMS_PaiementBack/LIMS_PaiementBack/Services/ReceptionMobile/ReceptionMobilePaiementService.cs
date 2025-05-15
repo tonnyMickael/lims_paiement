@@ -43,5 +43,10 @@ namespace LIMS_PaiementBack.Services
         {
             return await _receptionMobilePaiementRepository.GetMobileAConfirmerPayer();
         }
+
+        public async Task<ApiResponse> GetMobileOperateurAsync()
+        {
+            return await _receptionMobilePaiementRepository.GetMobileOperateur();
+        }
     }
 }
