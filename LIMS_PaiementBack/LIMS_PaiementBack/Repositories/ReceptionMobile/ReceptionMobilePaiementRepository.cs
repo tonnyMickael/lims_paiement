@@ -27,7 +27,7 @@ namespace LIMS_PaiementBack.Repositories
 
             await _dbContext.Paiement
                 .Where(x => x.idPaiement == recu.idPaiement)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, 22));
+                .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, true));
 
             await _dbContext.Prestation
                 .Where(prestation =>
@@ -40,7 +40,7 @@ namespace LIMS_PaiementBack.Repositories
                         .Select(ed => ed.id_prestation)
                         .Contains(prestation.id_prestation)
                 )
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 2));
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
         }
 
         public async Task<ApiResponse> GetDataMobileAPayer()
@@ -78,7 +78,7 @@ namespace LIMS_PaiementBack.Repositories
                 from paiement in _dbContext.Paiement 
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where paiement.ModePaiement == 2 && paiement.EtatPaiement == 22
+                where paiement.ModePaiement == 2 && paiement.EtatPaiement == true
                         && paiement.DatePaiement >= dateDebutGlobale
                         && paiement.DatePaiement <= dateFinGlobale
                 group new { paiement, etat_decompte } by (paiement.DatePaiement != null ? paiement.DatePaiement.Value.Date : DateTime.MinValue) into g
@@ -109,7 +109,7 @@ namespace LIMS_PaiementBack.Repositories
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 where paiement.ModePaiement == 2 
-                        && paiement.EtatPaiement == 12 
+                        && paiement.EtatPaiement == false
                         && paiement.DatePaiement.Value.Date == DateTime.Today.Date
                 orderby paiement.idPaiement descending
                 select new RecuDto
@@ -167,7 +167,7 @@ namespace LIMS_PaiementBack.Repositories
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 where paiement.DatePaiement >= dateDebutGlobale
                       && paiement.DatePaiement <= dateFinGlobale
-                group new { paiement, receptionMobile, prestation } by new
+                group new { paiement, receptionMobile, etat_decompte } by new
                 {
                     Date = paiement.DatePaiement.Value.Date,
                     Operateur = receptionMobile.operateurmobile // remplace par ton vrai champ
@@ -178,7 +178,7 @@ namespace LIMS_PaiementBack.Repositories
                     Date = g.Key.Date,
                     Operateur = g.Key.Operateur,
                     NombrePaiements = g.Count(),
-                    MontantTotal = g.Sum(x => (double)x.prestation.total_montant * (1 - x.prestation.remise / 100.0)) // remplace par ton vrai champ
+                    MontantTotal = g.Sum(x => (double)x.etat_decompte.total_montant * (1 - x.etat_decompte.remise / 100.0)) // remplace par ton vrai champ
                 }).ToListAsync();
 
             return new ApiResponse

@@ -37,29 +37,25 @@ namespace LIMS_PaiementBack.Repositories
 
             int newReference = lastRef + 1;
 
-            // 2. Mise à jour de l'état de la prestation
-            /*
-                await _dbContext.Prestation
-                    .Where(x => x.id_prestation == demande.id_etat_decompte)
-                    .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.statuspaiement, 3));
-            */
+            // 2. Mise à jour de l'état de la prestation pour la demande de note de débit
             await _dbContext.Prestation
                 .Where(p => p.id_prestation == _dbContext.Etat_decompte
                     .Where(e => e.id_etat_decompte == demande.id_etat_decompte)
                     .Select(e => e.id_prestation)
                     .FirstOrDefault())
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 3));            
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.demandeEffectuer, true));            
 
             // 3. Récupérer les infos pour créer le départ
-            var infos = await (from ed in _dbContext.Etat_decompte
-                            join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
-                            join c in _dbContext.Client on p.id_client equals c.id_client
-                            where ed.id_etat_decompte == demande.id_etat_decompte
-                            select new
-                            {
-                                ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
-                                NomClient = c.Nom,
-                            }).FirstOrDefaultAsync();
+            var infos = await (
+                from ed in _dbContext.Etat_decompte
+                join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
+                join c in _dbContext.Client on p.id_client equals c.id_client
+                where ed.id_etat_decompte == demande.id_etat_decompte
+                select new
+                {
+                    ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
+                    NomClient = c.Nom,
+                }).FirstOrDefaultAsync();
 
             if (infos == null)
                 throw new Exception("Impossible de récupérer les informations liées à la demande.");
@@ -229,7 +225,7 @@ namespace LIMS_PaiementBack.Repositories
                     email = client.Email,
                     adresse = client.Adresse,
                     contact = client.Contact,
-                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN, client.Passport), // récuperation de d'identité du client
+                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récuperation de d'identité du client
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     datePaiement = DateTime.Now,
                     id_etat_decompte = etatDecompte.id_etat_decompte,
@@ -275,7 +271,8 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == 2
+                where prestation.status_paiement == true 
+                    && prestation.demandeEffectuer == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new
                 {
@@ -320,7 +317,9 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == 2 && etat_decompte.date_etat_decompte == today
+                where prestation.status_paiement == true 
+                    && prestation.demandeEffectuer == false 
+                    && etat_decompte.date_etat_decompte == today
                 orderby etat_decompte.date_etat_decompte descending
                 select new
                 {
