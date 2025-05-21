@@ -117,7 +117,7 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
 
             //valeur de paiement confirmer pour espece, mobile, virement
             // var etatsVoulus = new[] { 21, 22, 23 };
-            var etatsVoulus = new[] { 31, 32, 33 };
+            var etatsVoulus = new[] { 1, 2, 3 };
 
             /*
                 * Récupérer les états hebdomadaires pour les 4 dernières semaines
@@ -133,9 +133,11 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
                 join paiement in _dbContext.Paiement on etatDecompte.id_etat_decompte equals paiement.id_etat_decompte
                 join prestation in _dbContext.Prestation on etatDecompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                 // Filtre : uniquement les paiements dont l'état est 21, 22 ou 23
+                // Filtre : uniquement les paiements dont l'état est 21, 22 ou 23
                 // et appartenant aux 4 dernières semaines
-                where etatsVoulus.Contains(paiement.EtatPaiement) && idSemaines.Contains(semaine.idSemaine)
+                where etatsVoulus.Contains(paiement.ModePaiement) 
+                    && paiement.EtatPaiement == true
+                    && idSemaines.Contains(semaine.idSemaine)
                 // Projette les données dans un objet DTO personnalisé
                 select new VersementHebdomadaireDto
                 {

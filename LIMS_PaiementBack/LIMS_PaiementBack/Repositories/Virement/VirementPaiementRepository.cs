@@ -34,7 +34,7 @@ namespace LIMS_PaiementBack.Repositories
                     email = client.Email,
                     adresse = client.Adresse,
                     contact = client.Contact,
-                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN, client.Passport),
+                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""),
                     montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     id_etat_decompte = id_etat_decompte
@@ -56,7 +56,7 @@ namespace LIMS_PaiementBack.Repositories
                 join prestation in _dbContext.Prestation on client.id_client equals prestation.id_client
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
                 join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
-                where paiement.ModePaiement == 3 && paiement.EtatPaiement == 13
+                where paiement.ModePaiement == 3 && paiement.EtatPaiement == true
                 orderby paiement.idPaiement descending
                 select new PaiementDto
                 {

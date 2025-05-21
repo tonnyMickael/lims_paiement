@@ -34,7 +34,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
 
                 //valeur de paiement confirmer pour espece, mobile, virement
                 // var etatsVoulus = new[] { 21, 22, 23 };
-                var etatsVoulus = new[] { 31, 32, 33 };
+                var etatsVoulus = new[] { 1, 2, 3 };
 
                 /*
                     * Récupérer les états de compte pour la date actuelle
@@ -63,7 +63,9 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                         (etatClient, paiement) => new { etatClient.Etat, etatClient.Client, Paiement = paiement }
                     )
                     .Where(joined =>
-                        joined.Paiement != null && EF.Functions.DateDiffDay(joined.Paiement.DatePaiement, today) == 0 && etatsVoulus.Contains(joined.Paiement.EtatPaiement)
+                        joined.Paiement != null && EF.Functions.DateDiffDay(joined.Paiement.DatePaiement, today) == 0
+                        && etatsVoulus.Contains(joined.Paiement.ModePaiement)
+                        && joined.Paiement.EtatPaiement == true
                     )
                     .ToListAsync();
 
@@ -106,7 +108,9 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                     join paiement in _dbContext.Paiement on etat_Decompte.id_etat_decompte equals paiement.id_etat_decompte
                     join prestation in _dbContext.Prestation on etat_Decompte.id_prestation equals prestation.id_prestation
                     join client in _dbContext.Client on prestation.id_client equals client.id_client
-                    where etatsVoulus.Contains(paiement.EtatPaiement) && etat_journalier.DateEncaissement == today
+                    where etatsVoulus.Contains(paiement.ModePaiement) 
+                        && paiement.EtatPaiement == true
+                        && etat_journalier.DateEncaissement == today
                     select new EncaissementJournalierDto {
                         dateEncaissement = etat_journalier.DateEncaissement,
                         EtatDecompte = etat_Decompte.ReferenceEtatDecompte,

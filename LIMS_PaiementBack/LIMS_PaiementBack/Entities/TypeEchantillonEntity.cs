@@ -2,6 +2,7 @@
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("type_echantillon")]
     public class TypeEchantillonEntity
     {
         [Key]

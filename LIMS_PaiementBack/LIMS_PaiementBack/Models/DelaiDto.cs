@@ -18,7 +18,7 @@ namespace LIMS_PaiementBack.Models
         //attribut paiement
         public int idPaiement { get; set; }
         public DateTime? datePaiement { get; set; }
-        public int EtatPaiement { get; set; }
+        public bool EtatPaiement { get; set; }
 
         //attribut delai
         public DateTime DateFinDelai { get; set; }

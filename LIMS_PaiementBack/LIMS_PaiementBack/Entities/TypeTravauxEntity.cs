@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("type_travaux")]
     public class TypeTravauxEntity
     {
         [Key]

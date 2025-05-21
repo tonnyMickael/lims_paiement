@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("paiement")]
     public class PaiementEntity
     {
         [Key]
         public int idPaiement { get; set; }
         public DateTime? DatePaiement { get; set; }
         public int ModePaiement { get; set; }
-        public int EtatPaiement { get; set; }
+        public bool EtatPaiement { get; set; }
         public string? nomDuPayant { get; set; }
         public string? prenomDuPayant { get; set; }
         public string? contactdupayant { get; set; }

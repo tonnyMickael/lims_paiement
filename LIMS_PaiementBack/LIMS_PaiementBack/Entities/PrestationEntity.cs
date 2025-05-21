@@ -3,16 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("prestation")]
     public class PrestationEntity
     {
         [Key]
         public int id_prestation { get; set; }
         public int id_client { get; set; }
-        public int id_etat_prestation { get; set; }
-        // public decimal total_montant { get; set; }
-        // public double remise { get; set; }
+        public int id_etat_prestation { get; set; }        
         [Column("statut_paiement")]
-        public int status_paiement { get; set; } // 1 = non payé, 2 = payé, 3 = payé et demande effectuée
+        public bool status_paiement { get; set; } // 0 = non payé, 1 = payé
+        [Column("demandeeffectuer")]
+        public bool demandeEffectuer { get; set; } // 0 = non effectuée, 1 = effectuée
 
         [ForeignKey(nameof(id_client))]
         public ClientEntity? client { get; set; }

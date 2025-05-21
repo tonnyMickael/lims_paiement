@@ -19,6 +19,7 @@ namespace LIMS_PaiementBack.Repositories
         //ajout d'un nouveau delai accorder
         public async Task AddDelaiPaiement(DelaiEntity delai, PaiementEntity paiement)
         {
+            paiement.DatePaiement = null;
             await _dbContext.Paiement.AddAsync(paiement);
             await _dbContext.SaveChangesAsync();
 
@@ -27,18 +28,18 @@ namespace LIMS_PaiementBack.Repositories
             await _dbContext.DelaiPaiement.AddAsync(delai);
             await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Prestation
-                .Where(prestation =>
-                    _dbContext.Etat_decompte
-                        .Where(ed => _dbContext.Paiement
-                            .Where(p => p.idPaiement == paiement.idPaiement)
-                            .Select(p => p.id_etat_decompte)
-                            .Contains(ed.id_etat_decompte)
-                        )
-                        .Select(ed => ed.id_prestation)
-                        .Contains(prestation.id_prestation)
-                )
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 4));
+            // await _dbContext.Prestation
+            //     .Where(prestation =>
+            //         _dbContext.Etat_decompte
+            //             .Where(ed => _dbContext.Paiement
+            //                 .Where(p => p.idPaiement == paiement.idPaiement)
+            //                 .Select(p => p.id_etat_decompte)
+            //                 .Contains(ed.id_etat_decompte)
+            //             )
+            //             .Select(ed => ed.id_prestation)
+            //             .Contains(prestation.id_prestation)
+            //     )
+            //     .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 4));
         }
 
         //afficher tout les delai qui ont été accorder
@@ -98,8 +99,8 @@ namespace LIMS_PaiementBack.Repositories
                 {
                     Nom = client.Nom,
                     Adresse = client.Adresse,
-                    Identity = FonctionGlobalUtil.GetClientIdentity(client.CIN, client.Passport), // récupère l'identité depuis CIN ou Passeport
-                    ref_contrat = client.ref_contrat // référence du contrat lié au client
+                    Identity = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récupère l'identité depuis CIN ou Passeport
+                    ref_contrat = client.ref_contrat ?? "" // référence du contrat lié au client
                 }).FirstOrDefaultAsync(); // récupère le premier résultat trouvé ou null si aucun
 
 
@@ -144,7 +145,7 @@ namespace LIMS_PaiementBack.Repositories
                         ref_contrat = clientIdentity.ref_contrat,
                         DatePaiement = DateTime.Today,
                         ModePaiement = 4,
-                        EtatPaiement = 40,
+                        EtatPaiement = false,
                         id_etat_decompte = dernierIdEtatDecompte
                     };                    
 
@@ -165,6 +166,7 @@ namespace LIMS_PaiementBack.Repositories
                 }
             }
 
+            var etatsVoulus = new[] { 1, 2, 3 };
             // Récupérer les données de la base de données pour le client         
             var query = await (
                 from client in _dbContext.Client
@@ -177,7 +179,8 @@ namespace LIMS_PaiementBack.Repositories
                 // Jointure entre Etat_decompte et Paiement via id_etat_decompte
                 join paiement in _dbContext.Paiement on etatDecompte.id_etat_decompte equals paiement.id_etat_decompte
                 // Filtrage : ne prendre que les paiements ayant EtatPaiement = 21,22,23
-                where (paiement.EtatPaiement == 21 || paiement.EtatPaiement == 22 || paiement.EtatPaiement == 23)  
+                // where (paiement.EtatPaiement == 21 || paiement.EtatPaiement == 22 || paiement.EtatPaiement == 23)  
+                where etatsVoulus.Contains(paiement.ModePaiement) && paiement.EtatPaiement == true
                     // Filtrage pour s'assurer qu'on récupère les prestations du bon client
                     && client.Nom == clientIdentity.Nom
                     && client.Adresse == clientIdentity.Adresse
@@ -274,7 +277,8 @@ namespace LIMS_PaiementBack.Repositories
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
                 join delai_paiement in _dbContext.DelaiPaiement on paiement.idPaiement equals delai_paiement.idPaiement
-                where paiement.EtatPaiement == 31 || paiement.EtatPaiement == 32 || paiement.EtatPaiement == 33
+                // where paiement.EtatPaiement == 31 || paiement.EtatPaiement == 32 || paiement.EtatPaiement == 33
+                where paiement.ModePaiement == 4 && paiement.EtatPaiement == false 
                 select new DelaiDto
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,
@@ -305,20 +309,20 @@ namespace LIMS_PaiementBack.Repositories
             if (paiement != null)
             {
                 paiement.DatePaiement = DateTime.Now;
-                switch (modepaiement)
-                {
-                    case 1:
-                        paiement.EtatPaiement = 11; // Paiement direct
-                        break;
-                    case 2:
-                        paiement.EtatPaiement = 12; // Paiement par mobile
-                        break;
-                    /*case 3:
-                        paiement.EtatPaiement = 13; // Paiement par virement
-                        break;*/
-                    default:
-                        throw new ArgumentException("Mode de paiement invalide.");
-                }
+                // switch (modepaiement)
+                // {
+                //     case 1:
+                //         paiement.EtatPaiement = 11; // Paiement direct
+                //         break;
+                //     case 2:
+                //         paiement.EtatPaiement = 12; // Paiement par mobile
+                //         break;
+                //     /*case 3:
+                //         paiement.EtatPaiement = 13; // Paiement par virement
+                //         break;*/
+                //     default:
+                //         throw new ArgumentException("Mode de paiement invalide.");
+                // }
                 // Logique métier pour définir l'état du paiement
                 await _dbContext.SaveChangesAsync();
             }
@@ -338,17 +342,17 @@ namespace LIMS_PaiementBack.Repositories
             {
                 paiement.DatePaiement = DateTime.Now;
                 paiement.ModePaiement = modepaiement;
-                switch (modepaiement)
-                {
-                    case 1:
-                        paiement.EtatPaiement = 11; // Paiement direct
-                        break;
-                    case 2:
-                        paiement.EtatPaiement = 12; // Paiement par mobile
-                        break;
-                    default:
-                        throw new ArgumentException("Mode de paiement invalide.");
-                }
+                // switch (modepaiement)
+                // {
+                //     case 1:
+                //         paiement.EtatPaiement = 11; // Paiement direct
+                //         break;
+                //     case 2:
+                //         paiement.EtatPaiement = 12; // Paiement par mobile
+                //         break;
+                //     default:
+                //         throw new ArgumentException("Mode de paiement invalide.");
+                // }
                 // Logique métier pour définir l'état du paiement
                 await _dbContext.SaveChangesAsync();
             }
@@ -372,12 +376,13 @@ namespace LIMS_PaiementBack.Repositories
             Console.WriteLine($"lundi: {prochainLundi}");
             Console.WriteLine($"vendredi: {prochainVendredi}");
 
+            // var etatsVoulus = new[] { 1, 2 };
             var delaiSemaineProchaine = await (
                 from delai in _dbContext.DelaiPaiement
                 join paiement in _dbContext.Paiement on delai.idPaiement equals paiement.idPaiement
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where (paiement.EtatPaiement == 31 || paiement.EtatPaiement == 32)
+                where paiement.ModePaiement == 4 && paiement.EtatPaiement == false
                     && delai.DateFinDelai >= prochainLundi
                     && delai.DateFinDelai <= prochainVendredi
                 group new { delai, etat_decompte } by delai.DateFinDelai.Date into g
@@ -410,7 +415,7 @@ namespace LIMS_PaiementBack.Repositories
                 from etat_decompte in _dbContext.Etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                where prestation.status_paiement == 1 && client.IsInterne == true
+                where prestation.status_paiement == false && client.IsInterne == true
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
                 {

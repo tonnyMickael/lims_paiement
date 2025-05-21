@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("receptionespece")]
     public class ReceptionEspeceEntity
     {
         [Key]
