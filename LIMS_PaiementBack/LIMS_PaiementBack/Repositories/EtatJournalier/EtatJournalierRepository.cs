@@ -64,7 +64,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                     )
                     .Where(joined =>
                         joined.Paiement != null && EF.Functions.DateDiffDay(joined.Paiement.DatePaiement, today) == 0
-                        && etatsVoulus.Contains(joined.Paiement.ModePaiement)
+                        && etatsVoulus.Contains(joined.Paiement.id_modePaiement)
                         && joined.Paiement.EtatPaiement == true
                     )
                     .ToListAsync();
@@ -108,7 +108,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                     join paiement in _dbContext.Paiement on etat_Decompte.id_etat_decompte equals paiement.id_etat_decompte
                     join prestation in _dbContext.Prestation on etat_Decompte.id_prestation equals prestation.id_prestation
                     join client in _dbContext.Client on prestation.id_client equals client.id_client
-                    where etatsVoulus.Contains(paiement.ModePaiement) 
+                    where etatsVoulus.Contains(paiement.id_modePaiement) 
                         && paiement.EtatPaiement == true
                         && etat_journalier.DateEncaissement == today
                     select new EncaissementJournalierDto {

@@ -1,9 +1,9 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("semaine")]
+    [Table("Semaine")]
     public class SemaineEntity
     {
         [Key]

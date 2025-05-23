@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("etatjournalier")]
+    [Table("EtatJournalier")]
     public class EtatJournalierEntity
     {
         [Key]

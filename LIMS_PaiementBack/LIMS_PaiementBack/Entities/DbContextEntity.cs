@@ -24,6 +24,7 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<DelaiEntity> DelaiPaiement { get; set; }
         public DbSet<SousContratEntity> SousContrats { get; set; }
         public DbSet<DemandeEntity> DemandeNoteDebit { get; set; }
+        public DbSet<ModePaiementEntity> ModePaiement { get; set; }
         public DbSet<EtatJournalierEntity> EtatJournalier { get; set; }
         public DbSet<OrdreDeVirementEntity> OrdreDeVirement { get; set; }
         public DbSet<ReceptionEspeceEntity> ReceptionEspece { get; set; }
@@ -62,6 +63,12 @@ namespace LIMS_PaiementBack.Entities
                 .WithMany()
                 .HasForeignKey(e => e.id_etat_decompte)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            modelBuilder.Entity<PaiementEntity>()
+                .HasOne(e => e.modepaiement)
+                .WithMany(m => m.paiements)
+                .HasForeignKey(e => e.id_modePaiement)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<EtatJournalierEntity>()
                 .HasOne(e => e.etatDecompte)
@@ -79,6 +86,12 @@ namespace LIMS_PaiementBack.Entities
                 .HasOne(e => e.Paiement)
                 .WithMany(m => m.Delais)
                 .HasForeignKey(e => e.idPaiement)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            modelBuilder.Entity<DelaiEntity>()
+                .HasOne(e => e.ModePaiement)
+                .WithMany(m => m.delais)
+                .HasForeignKey(e => e.id_modePaiement)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrdreDeVirementEntity>()

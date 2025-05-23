@@ -135,7 +135,7 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 // Filtre : uniquement les paiements dont l'état est 21, 22 ou 23
                 // et appartenant aux 4 dernières semaines
-                where etatsVoulus.Contains(paiement.ModePaiement) 
+                where etatsVoulus.Contains(paiement.id_modePaiement) 
                     && paiement.EtatPaiement == true
                     && idSemaines.Contains(semaine.idSemaine)
                 // Projette les données dans un objet DTO personnalisé

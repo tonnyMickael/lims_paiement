@@ -66,7 +66,7 @@ namespace LIMS_PaiementBack.Repositories
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 // join partenaire in _dbContext.Partenaire on sousContrat.idPartenaire equals partenaire.idPartenaire
                 // join contrat in _dbContext.ContratPartenaire on partenaire.idPartenaire equals contrat.idPartenaire
-                where paiement.ModePaiement == 4 && paiement.EtatPaiement == false // Etat de paiement pour le sous contrat (non payé)
+                where paiement.id_modePaiement == 4 && paiement.EtatPaiement == false // Etat de paiement pour le sous contrat (non payé)
                 select new SousContratDto
                 {
                     Paiement = new PaiementDto

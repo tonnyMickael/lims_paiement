@@ -78,7 +78,7 @@ namespace LIMS_PaiementBack.Repositories
                 from paiement in _dbContext.Paiement 
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where paiement.ModePaiement == 2 && paiement.EtatPaiement == true
+                where paiement.id_modePaiement == 2 && paiement.EtatPaiement == true
                         && paiement.DatePaiement >= dateDebutGlobale
                         && paiement.DatePaiement <= dateFinGlobale
                 group new { paiement, etat_decompte } by (paiement.DatePaiement != null ? paiement.DatePaiement.Value.Date : DateTime.MinValue) into g
@@ -108,7 +108,7 @@ namespace LIMS_PaiementBack.Repositories
                 from paiement in _dbContext.Paiement
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where paiement.ModePaiement == 2 
+                where paiement.id_modePaiement == 2 
                         && paiement.EtatPaiement == false
                         && paiement.DatePaiement.Value.Date == DateTime.Today.Date
                 orderby paiement.idPaiement descending

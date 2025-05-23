@@ -19,8 +19,8 @@ namespace LIMS_PaiementBack.Services
             var paiements = new PaiementEntity
             {
                 DatePaiement = paiement.DatePaiement,
-                ModePaiement = paiement.ModePaiement,
-                EtatPaiement = paiement.EtatPaiement,
+                id_modePaiement = paiement.id_modePaiement,
+                EtatPaiement = false,
                 nomDuPayant = paiement.nomPayant,
                 prenomDuPayant = paiement.prenomPayant,
                 contactdupayant = paiement.contactdupayant,

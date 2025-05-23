@@ -30,14 +30,14 @@ namespace LIMS_PaiementBack.Services
             {
                 DatePaiement = delai.datePaiement,
                 EtatPaiement = delai.EtatPaiement,
-                ModePaiement = delai.modePaiement,
+                id_modePaiement = delai.id_modePaiement,
                 id_etat_decompte = delai.id_etat_decompte
             };
 
             var delaiPaiement = new DelaiEntity
             {
                DateFinDelai = delai.DateFinDelai,
-               ModePaiement = delai.modePaiement,
+               id_modePaiement = delai.id_modePaiement,
                idPaiement = delai.idPaiement
             };
 

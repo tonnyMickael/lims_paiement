@@ -32,8 +32,8 @@ namespace LIMS_PaiementBack.Services
             var paiement = new PaiementEntity
             {
                 DatePaiement = contrat.Paiement.DatePaiement,
-                ModePaiement = contrat.Paiement.ModePaiement,
-                EtatPaiement = contrat.Paiement.EtatPaiement,
+                id_modePaiement = contrat.Paiement.id_modePaiement,
+                EtatPaiement = false,
                 id_etat_decompte = contrat.Paiement.id_etat_decompte
             };
 

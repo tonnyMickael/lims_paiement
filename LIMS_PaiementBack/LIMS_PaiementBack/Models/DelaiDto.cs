@@ -22,7 +22,7 @@ namespace LIMS_PaiementBack.Models
 
         //attribut delai
         public DateTime DateFinDelai { get; set; }
-        public int modePaiement { get; set; }
+        public int id_modePaiement { get; set; }
         public int nombreEchantillon { get; set; }
     }
 }

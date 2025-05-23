@@ -58,7 +58,7 @@ namespace LIMS_PaiementBack.Repositories
                     datePaiement = paiement.DatePaiement,
                     EtatPaiement = paiement.EtatPaiement,
                     DateFinDelai = delai_paiement.DateFinDelai,
-                    modePaiement = delai_paiement.ModePaiement
+                    id_modePaiement = delai_paiement.id_modePaiement
                 }).ToListAsync();
 
             var rendu = new ApiResponse
@@ -144,7 +144,7 @@ namespace LIMS_PaiementBack.Repositories
                         clients = clientIdentity.Nom,
                         ref_contrat = clientIdentity.ref_contrat,
                         DatePaiement = DateTime.Today,
-                        ModePaiement = 4,
+                        id_modePaiement = 4,
                         EtatPaiement = false,
                         id_etat_decompte = dernierIdEtatDecompte
                     };                    
@@ -180,7 +180,7 @@ namespace LIMS_PaiementBack.Repositories
                 join paiement in _dbContext.Paiement on etatDecompte.id_etat_decompte equals paiement.id_etat_decompte
                 // Filtrage : ne prendre que les paiements ayant EtatPaiement = 21,22,23
                 // where (paiement.EtatPaiement == 21 || paiement.EtatPaiement == 22 || paiement.EtatPaiement == 23)  
-                where etatsVoulus.Contains(paiement.ModePaiement) && paiement.EtatPaiement == true
+                where etatsVoulus.Contains(paiement.id_modePaiement) && paiement.EtatPaiement == true
                     // Filtrage pour s'assurer qu'on récupère les prestations du bon client
                     && client.Nom == clientIdentity.Nom
                     && client.Adresse == clientIdentity.Adresse
@@ -278,7 +278,7 @@ namespace LIMS_PaiementBack.Repositories
                 join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
                 join delai_paiement in _dbContext.DelaiPaiement on paiement.idPaiement equals delai_paiement.idPaiement
                 // where paiement.EtatPaiement == 31 || paiement.EtatPaiement == 32 || paiement.EtatPaiement == 33
-                where paiement.ModePaiement == 4 && paiement.EtatPaiement == false 
+                where paiement.id_modePaiement == 4 && paiement.EtatPaiement == false 
                 select new DelaiDto
                 {
                     id_etat_decompte = etat_decompte.id_etat_decompte,
@@ -288,7 +288,7 @@ namespace LIMS_PaiementBack.Repositories
                     date_etat_decompte = etat_decompte.date_etat_decompte,
                     datePaiement = paiement.DatePaiement,
                     DateFinDelai = delai_paiement.DateFinDelai,
-                    modePaiement = delai_paiement.ModePaiement
+                    id_modePaiement = delai_paiement.id_modePaiement
                 }
             ).ToListAsync();
 
@@ -304,7 +304,7 @@ namespace LIMS_PaiementBack.Repositories
         public async Task PaiementDelaiDirect(int id_etat_decompte, int modepaiement)
         {
             var paiement = await _dbContext.Paiement
-                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.ModePaiement == modepaiement);
+                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
             if (paiement != null)
             {
@@ -336,12 +336,12 @@ namespace LIMS_PaiementBack.Repositories
         public async Task PaiementDelaiParChangement(int id_etat_decompte, int modepaiement)
         {
             var paiement = await _dbContext.Paiement
-                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.ModePaiement == modepaiement);
+                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
             if (paiement != null)
             {
                 paiement.DatePaiement = DateTime.Now;
-                paiement.ModePaiement = modepaiement;
+                paiement.id_modePaiement = modepaiement;
                 // switch (modepaiement)
                 // {
                 //     case 1:
@@ -382,7 +382,7 @@ namespace LIMS_PaiementBack.Repositories
                 join paiement in _dbContext.Paiement on delai.idPaiement equals paiement.idPaiement
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where paiement.ModePaiement == 4 && paiement.EtatPaiement == false
+                where paiement.id_modePaiement == 4 && paiement.EtatPaiement == false
                     && delai.DateFinDelai >= prochainLundi
                     && delai.DateFinDelai <= prochainVendredi
                 group new { delai, etat_decompte } by delai.DateFinDelai.Date into g
@@ -390,13 +390,13 @@ namespace LIMS_PaiementBack.Repositories
                 select new DashboardDelaiDto
                 {
                     dateDujour = g.Key,
-                    nombreEnEspece = g.Count(x => x.delai.ModePaiement == 1),
-                    nombreEnMobile = g.Count(x => x.delai.ModePaiement == 2),
+                    nombreEnEspece = g.Count(x => x.delai.id_modePaiement == 1),
+                    nombreEnMobile = g.Count(x => x.delai.id_modePaiement == 2),
                     montantEnEspece = g
-                        .Where(x => x.delai.ModePaiement == 1)
+                        .Where(x => x.delai.id_modePaiement == 1)
                         .Sum(x => (double)(x.etat_decompte.total_montant) * (1 - x.etat_decompte.remise / 100.0)),
                     montantEnMobile = g
-                        .Where(x => x.delai.ModePaiement == 2)
+                        .Where(x => x.delai.id_modePaiement == 2)
                         .Sum(x => (double)(x.etat_decompte.total_montant) * (1 - x.etat_decompte.remise / 100.0))
                 }).ToListAsync();
 
@@ -415,7 +415,7 @@ namespace LIMS_PaiementBack.Repositories
                 from etat_decompte in _dbContext.Etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                where prestation.status_paiement == false && client.IsInterne == true
+                where prestation.status_paiement == false && client.IsInterne == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
                 {
