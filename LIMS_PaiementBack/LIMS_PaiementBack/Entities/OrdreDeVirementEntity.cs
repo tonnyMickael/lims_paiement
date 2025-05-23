@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("ordredevirement")]
+    [Table("OrdreDeVirement")]
 
     public class OrdreDeVirementEntity
     {

@@ -56,7 +56,7 @@ namespace LIMS_PaiementBack.Repositories
                 join prestation in _dbContext.Prestation on client.id_client equals prestation.id_client
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
                 join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
-                where paiement.ModePaiement == 3 && paiement.EtatPaiement == true
+                where paiement.id_modePaiement == 3 && paiement.EtatPaiement == true
                 orderby paiement.idPaiement descending
                 select new PaiementDto
                 {

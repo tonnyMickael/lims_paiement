@@ -15,7 +15,7 @@
 
         //attribut paiement post
         public DateTime DatePaiement { get; set; }
-        public int ModePaiement { get; set; }
+        public int id_modePaiement { get; set; }
         public bool EtatPaiement { get; set; }
         public string? nomPayant { get; set; }
         public string? prenomPayant { get; set; }

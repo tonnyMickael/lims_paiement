@@ -1,12 +1,13 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LIMS_PaiementBack.Entities
 {
+    [Table("Details_etat_decompte")]
     public class Details_etat_decompte_Entity
     {
         [Key]
