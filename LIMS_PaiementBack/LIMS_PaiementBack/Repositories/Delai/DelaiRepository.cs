@@ -309,22 +309,24 @@ namespace LIMS_PaiementBack.Repositories
             // Cependant, il est possible qu'aucun paiement n'existe encore avec ce mode de paiement (ex : modepaiement=1 ou 2),
             // alors qu'il existe bien un paiement pour ce id_etat_decompte mais avec un autre mode (ex : 4 pour délai).
             // On va donc d'abord chercher le paiement avec le mode demandé, sinon on prend le paiement avec id_etat_decompte et mode 4 (délai).
-            var paiement = await _dbContext.Paiement
-                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
+            // Pour voir la requête générée par EF et les données utilisées sans lever d'exception,
+            // tu peux activer le logging de EF Core et afficher les résultats trouvés.
+            var paiementQuery = _dbContext.Paiement
+                .Where(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
-            if (paiement == null)
+            var paiement = await paiementQuery.FirstOrDefaultAsync();
+            if (paiement != null)
             {
-                // On tente de récupérer le paiement "délai" si le paiement direct n'existe pas encore
-                paiement = await _dbContext.Paiement
-                    .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == 4);
                 paiement.DatePaiement = DateTime.Now;
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();                
             }
             else
             {
-                // Gérer le cas où aucun paiement n'est trouvé
-                throw new Exception($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte}");
+                Console.WriteLine("Aucun paiement trouvé pour ces critères.");
             }
+
+            // Pour afficher la requête SQL générée (nécessite Microsoft.Extensions.Logging activé dans ton contexte)
+            // Console.WriteLine(paiementQuery.ToQueryString());                     
         }
 
         public async Task PaiementDelaiParChangement(int id_etat_decompte, int modepaiement)
@@ -333,25 +335,30 @@ namespace LIMS_PaiementBack.Repositories
             // Cependant, il est possible qu'aucun paiement n'existe encore avec ce mode de paiement (ex : modepaiement=1 ou 2),
             // alors qu'il existe bien un paiement pour ce id_etat_decompte mais avec un autre mode (ex : 4 pour délai).
             // On va donc d'abord chercher le paiement avec le mode demandé, sinon on prend le paiement avec id_etat_decompte et mode 4 (délai).
-            var paiement = await _dbContext.Paiement
-                .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
+            // var paiement = await _dbContext.Paiement
+            //     .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
+            var paiementQuery = _dbContext.Paiement
+                .Where(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
+            var paiement = await paiementQuery.FirstOrDefaultAsync();
+
+            // Si aucun paiement n'est trouvé avec le mode demandé, on tente avec le mode 4 (délai)
             if (paiement == null)
             {
-                // On tente de récupérer le paiement "délai" si le paiement direct n'existe pas encore
                 paiement = await _dbContext.Paiement
-                    .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == 4);
+                    .Where(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == 4)
+                    .FirstOrDefaultAsync();
+            }
 
-                if (paiement == null)
-                {
-                    throw new Exception($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte} (mode 4)");
-                }
-
+            if (paiement != null)
+            {                  
                 paiement.DatePaiement = DateTime.Now;
 
                 // On modifie le mode de paiement dans DelaiPaiement, pas dans Paiement
-                var delaiPaiement = await _dbContext.DelaiPaiement
-                    .FirstOrDefaultAsync(d => d.idPaiement == paiement.idPaiement);
+                var delaiPaiementQuery = _dbContext.DelaiPaiement
+                    .Where(d => d.idPaiement == paiement.idPaiement);
+
+                var delaiPaiement = await delaiPaiementQuery.FirstOrDefaultAsync();
 
                 if (delaiPaiement == null)
                 {
@@ -365,7 +372,9 @@ namespace LIMS_PaiementBack.Repositories
             else
             {
                 // Gérer le cas où aucun paiement n'est trouvé
-                throw new Exception($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte}");
+                // On ne lève plus d'exception, on log juste l'information
+                Console.WriteLine($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte} (mode demandé : {modepaiement} ou 4)");
+                // Optionnel : tu peux retourner ou lancer une exception custom si besoin
             }           
             
         }

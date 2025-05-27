@@ -107,7 +107,7 @@ namespace LIMS_PaiementBack.Repositories
                 from paiement in _dbContext.Paiement
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation 
-                where paiement.id_modePaiement == 3 
+                where (paiement.id_modePaiement == 3 || paiement.id_modePaiement == 4)
                         && paiement.EtatPaiement == false
                         && etat_decompte.id_etat_decompte == id_etat_decompte
                 orderby paiement.idPaiement descending
