@@ -26,6 +26,8 @@ namespace LIMS_PaiementBack.Services
         */
         public async Task AddDelaiAsync(DelaiDto delai)
         {
+
+            Console.WriteLine("id_modePaiement : voir le problème "+delai.id_modePaiement);
             var paiement = new PaiementEntity
             {
                 DatePaiement = delai.datePaiement,

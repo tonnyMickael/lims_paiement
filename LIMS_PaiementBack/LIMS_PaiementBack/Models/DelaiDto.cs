@@ -19,6 +19,7 @@ namespace LIMS_PaiementBack.Models
         public int idPaiement { get; set; }
         public DateTime? datePaiement { get; set; }
         public bool EtatPaiement { get; set; }
+        public int id_modePaiementTable { get; set; }
 
         //attribut delai
         public DateTime DateFinDelai { get; set; }

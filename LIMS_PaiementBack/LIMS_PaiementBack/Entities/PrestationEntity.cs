@@ -10,6 +10,8 @@ namespace LIMS_PaiementBack.Entities
         public int id_prestation { get; set; }
         public int id_client { get; set; }
         public int id_etat_prestation { get; set; }        
+        [Column("delaiaccorder")]
+        public bool delaiaccorder { get; set; } // 0 = non accorder, 1 = accorder
         [Column("statut_paiement")]
         public bool status_paiement { get; set; } // 0 = non payé, 1 = payé
         [Column("demandeeffectuer")]
