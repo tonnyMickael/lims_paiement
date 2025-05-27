@@ -25,6 +25,7 @@ namespace LIMS_PaiementBack.Controllers
             {
                 return BadRequest("Les données du delai sont invalides.");
             }
+            
             await _service.AddDelaiAsync(delai);
 
             var reponse = new ApiResponse

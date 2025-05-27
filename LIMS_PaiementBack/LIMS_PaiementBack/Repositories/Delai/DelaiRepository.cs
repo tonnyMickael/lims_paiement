@@ -20,6 +20,7 @@ namespace LIMS_PaiementBack.Repositories
         public async Task AddDelaiPaiement(DelaiEntity delai, PaiementEntity paiement)
         {
             paiement.DatePaiement = null;
+            paiement.id_modePaiement = 4;
             await _dbContext.Paiement.AddAsync(paiement);
             await _dbContext.SaveChangesAsync();
 
@@ -28,18 +29,18 @@ namespace LIMS_PaiementBack.Repositories
             await _dbContext.DelaiPaiement.AddAsync(delai);
             await _dbContext.SaveChangesAsync();
 
-            // await _dbContext.Prestation
-            //     .Where(prestation =>
-            //         _dbContext.Etat_decompte
-            //             .Where(ed => _dbContext.Paiement
-            //                 .Where(p => p.idPaiement == paiement.idPaiement)
-            //                 .Select(p => p.id_etat_decompte)
-            //                 .Contains(ed.id_etat_decompte)
-            //             )
-            //             .Select(ed => ed.id_prestation)
-            //             .Contains(prestation.id_prestation)
-            //     )
-            //     .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 4));
+            await _dbContext.Prestation
+                .Where(prestation =>
+                    _dbContext.Etat_decompte
+                        .Where(ed => _dbContext.Paiement
+                            .Where(p => p.idPaiement == paiement.idPaiement)
+                            .Select(p => p.id_etat_decompte)
+                            .Contains(ed.id_etat_decompte)
+                        )
+                        .Select(ed => ed.id_prestation)
+                        .Contains(prestation.id_prestation)
+                )
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.delaiaccorder, true));
         }
 
         //afficher tout les delai qui ont été accorder
@@ -288,7 +289,8 @@ namespace LIMS_PaiementBack.Repositories
                     date_etat_decompte = etat_decompte.date_etat_decompte,
                     datePaiement = paiement.DatePaiement,
                     DateFinDelai = delai_paiement.DateFinDelai,
-                    id_modePaiement = delai_paiement.id_modePaiement
+                    id_modePaiement = delai_paiement.id_modePaiement,
+                    id_modePaiementTable = paiement.id_modePaiement
                 }
             ).ToListAsync();
 
@@ -303,27 +305,19 @@ namespace LIMS_PaiementBack.Repositories
 
         public async Task PaiementDelaiDirect(int id_etat_decompte, int modepaiement)
         {
+            // Ici, on cherche un paiement pour l'état de décompte et le mode de paiement donnés.
+            // Cependant, il est possible qu'aucun paiement n'existe encore avec ce mode de paiement (ex : modepaiement=1 ou 2),
+            // alors qu'il existe bien un paiement pour ce id_etat_decompte mais avec un autre mode (ex : 4 pour délai).
+            // On va donc d'abord chercher le paiement avec le mode demandé, sinon on prend le paiement avec id_etat_decompte et mode 4 (délai).
             var paiement = await _dbContext.Paiement
                 .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
-            if (paiement != null)
+            if (paiement == null)
             {
+                // On tente de récupérer le paiement "délai" si le paiement direct n'existe pas encore
+                paiement = await _dbContext.Paiement
+                    .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == 4);
                 paiement.DatePaiement = DateTime.Now;
-                // switch (modepaiement)
-                // {
-                //     case 1:
-                //         paiement.EtatPaiement = 11; // Paiement direct
-                //         break;
-                //     case 2:
-                //         paiement.EtatPaiement = 12; // Paiement par mobile
-                //         break;
-                //     /*case 3:
-                //         paiement.EtatPaiement = 13; // Paiement par virement
-                //         break;*/
-                //     default:
-                //         throw new ArgumentException("Mode de paiement invalide.");
-                // }
-                // Logique métier pour définir l'état du paiement
                 await _dbContext.SaveChangesAsync();
             }
             else
@@ -335,32 +329,45 @@ namespace LIMS_PaiementBack.Repositories
 
         public async Task PaiementDelaiParChangement(int id_etat_decompte, int modepaiement)
         {
+             // Ici, on cherche un paiement pour l'état de décompte et le mode de paiement donnés.
+            // Cependant, il est possible qu'aucun paiement n'existe encore avec ce mode de paiement (ex : modepaiement=1 ou 2),
+            // alors qu'il existe bien un paiement pour ce id_etat_decompte mais avec un autre mode (ex : 4 pour délai).
+            // On va donc d'abord chercher le paiement avec le mode demandé, sinon on prend le paiement avec id_etat_decompte et mode 4 (délai).
             var paiement = await _dbContext.Paiement
                 .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == modepaiement);
 
-            if (paiement != null)
+            if (paiement == null)
             {
+                // On tente de récupérer le paiement "délai" si le paiement direct n'existe pas encore
+                paiement = await _dbContext.Paiement
+                    .FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte && p.id_modePaiement == 4);
+
+                if (paiement == null)
+                {
+                    throw new Exception($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte} (mode 4)");
+                }
+
                 paiement.DatePaiement = DateTime.Now;
-                paiement.id_modePaiement = modepaiement;
-                // switch (modepaiement)
-                // {
-                //     case 1:
-                //         paiement.EtatPaiement = 11; // Paiement direct
-                //         break;
-                //     case 2:
-                //         paiement.EtatPaiement = 12; // Paiement par mobile
-                //         break;
-                //     default:
-                //         throw new ArgumentException("Mode de paiement invalide.");
-                // }
-                // Logique métier pour définir l'état du paiement
+
+                // On modifie le mode de paiement dans DelaiPaiement, pas dans Paiement
+                var delaiPaiement = await _dbContext.DelaiPaiement
+                    .FirstOrDefaultAsync(d => d.idPaiement == paiement.idPaiement);
+
+                if (delaiPaiement == null)
+                {
+                    throw new Exception($"Aucun délai de paiement trouvé pour le paiement ID {paiement.idPaiement}");
+                }
+
+                delaiPaiement.id_modePaiement = modepaiement;
+
                 await _dbContext.SaveChangesAsync();
             }
             else
             {
                 // Gérer le cas où aucun paiement n'est trouvé
                 throw new Exception($"Aucun paiement trouvé pour l'état de décompte ID {id_etat_decompte}");
-            }
+            }           
+            
         }
 
         public async Task<ApiResponse> GetDelaiEnAttente()
@@ -415,7 +422,9 @@ namespace LIMS_PaiementBack.Repositories
                 from etat_decompte in _dbContext.Etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                where prestation.status_paiement == false && client.IsInterne == false
+                where prestation.status_paiement == false 
+                        && client.IsInterne == false
+                        && prestation.delaiaccorder == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
                 {
