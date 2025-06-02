@@ -25,9 +25,9 @@ namespace LIMS_PaiementBack.Repositories
             await _dbContext.OrdreDeVirement.AddAsync(recu);
             await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Paiement
-                .Where(x => x.idPaiement == recu.idPaiement)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, true));
+            // await _dbContext.Paiement
+            //     .Where(x => x.idPaiement == recu.idPaiement)
+            //     .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, true));
                 
             await _dbContext.Prestation
                 .Where(prestation =>

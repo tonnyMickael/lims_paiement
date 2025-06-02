@@ -16,6 +16,7 @@ namespace LIMS_PaiementBack.Repositories
 
         public async Task AddPaiementVirement(PaiementEntity paiement)
         {
+            paiement.EtatPaiement = true;
             await _dbContext.Paiement.AddAsync(paiement);
             await _dbContext.SaveChangesAsync();
         }
@@ -57,6 +58,7 @@ namespace LIMS_PaiementBack.Repositories
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
                 join paiement in _dbContext.Paiement on etat_decompte.id_etat_decompte equals paiement.id_etat_decompte
                 where paiement.id_modePaiement == 3 && paiement.EtatPaiement == true
+                // where paiement.id_modePaiement == 3 && paiement.EtatPaiement == false
                 orderby paiement.idPaiement descending
                 select new PaiementDto
                 {

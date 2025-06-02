@@ -37,10 +37,21 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                 var etatsVoulus = new[] { 1, 2, 3 };
 
                 /*
-                    * Récupérer les états de compte pour la date actuelle
-                    * Effectuer des jointures entre les tables Etat_decompte, Prestation, Client et Paiement
-                    * Filtrer les résultats en fonction de la date de paiement et de l'état de paiement
-                    * Vérifier si l'état de compte existe déjà dans la table EtatJournalier
+                    * Problème rencontré :
+                    * L'erreur "Unable to cast object of type 'System.DBNull' to type 'System.String'" survient
+                    * car dans la table Client, certains champs comme 'passeport' peuvent être NULL en base de données,
+                    * mais le mapping EF ou la projection attend une string non nullable.
+                    * 
+                    * Pourquoi le champ 'passeport' est sélectionné ?
+                    * EF Core, lors d'une jointure ou d'une projection sur une entité complète, sélectionne tous les champs de la table,
+                    * même si on ne les utilise pas dans le code. Si le champ est NULL en base et que la propriété C# n'est pas nullable,
+                    * cela provoque une exception lors du mapping.
+                    * 
+                    * Comment éviter cette erreur ?
+                    * 1. S'assurer que toutes les propriétés string dans l'entité Client qui peuvent être NULL en base sont bien déclarées comme string? (nullable) en C#.
+                    * 2. Ou alors, ne pas projeter l'entité complète, mais uniquement les champs nécessaires (projection anonyme ou DTO).
+                    * 
+                    * Ci-dessous, on fait une projection anonyme pour éviter ce problème.
                 */
                 var result = await _dbContext.Etat_decompte
                     .Where(etat => EF.Functions.DateDiffDay(etat.date_etat_decompte, today) == 0)
@@ -54,7 +65,18 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                         _dbContext.Client,
                         etatPrestation => etatPrestation.Prestation.id_client, // Clé étrangère vers Client
                         client => client.id_client,
-                        (etatPrestation, client) => new { etatPrestation.Etat, Client = client }
+                        (etatPrestation, client) => new
+                        {
+                            Etat = etatPrestation.Etat,
+                            // On ne prend que les champs nécessaires et on rend les strings nullable
+                            Client = new
+                            {
+                                client.id_client,
+                                client.IsInterne,
+                                Nom = client.Nom,
+                                // autres champs si besoin, tous en string? si nullable en base
+                            }
+                        }
                     )
                     .Join(
                         _dbContext.Paiement,
@@ -94,13 +116,11 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                 {
                     await _dbContext.EtatJournalier.AddRangeAsync(nouveauxEtatsJournalier);
                     await _dbContext.SaveChangesAsync();
-                }                
-                
+                }
+
                 /*
-                    * Récupérer les états de compte journalier pour la date actuelle
-                    * Effectuer des jointures entre les tables Etat_decompte, Prestation, Client et Paiement
-                    * Filtrer les résultats en fonction de la date d'encaissement et de l'état de paiement
-                    * Retourner une liste d'objets EncaissementJournalierDto contenant les détails des encaissements
+                    * Pour la récupération des états journaliers, on ne projette que les champs nécessaires dans le DTO,
+                    * ce qui évite aussi les problèmes de cast sur les champs NULL.
                 */
                 var listeJournalier = await (
                     from etat_journalier in _dbContext.EtatJournalier
@@ -108,7 +128,7 @@ namespace LIMS_PaiementBack.Repositories.EtatJournalier
                     join paiement in _dbContext.Paiement on etat_Decompte.id_etat_decompte equals paiement.id_etat_decompte
                     join prestation in _dbContext.Prestation on etat_Decompte.id_prestation equals prestation.id_prestation
                     join client in _dbContext.Client on prestation.id_client equals client.id_client
-                    where etatsVoulus.Contains(paiement.id_modePaiement) 
+                    where etatsVoulus.Contains(paiement.id_modePaiement)
                         && paiement.EtatPaiement == true
                         && etat_journalier.DateEncaissement == today
                     select new EncaissementJournalierDto {

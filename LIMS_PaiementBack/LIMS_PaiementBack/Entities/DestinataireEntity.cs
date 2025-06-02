@@ -7,6 +7,7 @@ namespace LIMS_PaiementBack.Entities
     public class DestinataireEntity
     {
         [Key]
+        [Column("id_destinataire")]
         public int idDestinataire {  get; set; }
         public string designation {  get; set; } = string.Empty;
 
