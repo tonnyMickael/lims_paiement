@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("Etat_decompte")]
+    [Table("etat_decompte")]
     public class EtatDecompteEntity
     {
         [Key]

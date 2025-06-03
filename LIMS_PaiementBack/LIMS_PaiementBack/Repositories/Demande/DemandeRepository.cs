@@ -271,7 +271,7 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true 
+                where prestation.status_paiement == true // prestation.status_paiement == false
                     && prestation.demandeEffectuer == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new
@@ -317,7 +317,7 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true 
+                where prestation.status_paiement == true // prestation.status_paiement == false
                     && prestation.demandeEffectuer == false 
                     && etat_decompte.date_etat_decompte == today
                 orderby etat_decompte.date_etat_decompte descending

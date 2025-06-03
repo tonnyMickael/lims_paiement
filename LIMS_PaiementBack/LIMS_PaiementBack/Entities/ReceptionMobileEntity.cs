@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("ReceptionMobile")]
+    [Table("receptionmobile")]
     public class ReceptionMobileEntity
     {
         [Key]
