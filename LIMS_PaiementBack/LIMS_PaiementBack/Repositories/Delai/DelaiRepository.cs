@@ -19,28 +19,44 @@ namespace LIMS_PaiementBack.Repositories
         //ajout d'un nouveau delai accorder
         public async Task AddDelaiPaiement(DelaiEntity delai, PaiementEntity paiement)
         {
-            paiement.DatePaiement = null;
-            paiement.id_modePaiement = 4;
-            await _dbContext.Paiement.AddAsync(paiement);
-            await _dbContext.SaveChangesAsync();
+            // Démarre une transaction
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    paiement.DatePaiement = null;
+                    paiement.id_modePaiement = 4;
+                    await _dbContext.Paiement.AddAsync(paiement);
+                    await _dbContext.SaveChangesAsync();
 
-            delai.idPaiement = paiement.idPaiement;
+                    delai.idPaiement = paiement.idPaiement;
 
-            await _dbContext.DelaiPaiement.AddAsync(delai);
-            await _dbContext.SaveChangesAsync();
+                    await _dbContext.DelaiPaiement.AddAsync(delai);
+                    await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Prestation
-                .Where(prestation =>
-                    _dbContext.Etat_decompte
-                        .Where(ed => _dbContext.Paiement
-                            .Where(p => p.idPaiement == paiement.idPaiement)
-                            .Select(p => p.id_etat_decompte)
-                            .Contains(ed.id_etat_decompte)
+                    await _dbContext.Prestation
+                        .Where(prestation =>
+                            _dbContext.Etat_decompte
+                                .Where(ed => _dbContext.Paiement
+                                    .Where(p => p.idPaiement == paiement.idPaiement)
+                                    .Select(p => p.id_etat_decompte)
+                                    .Contains(ed.id_etat_decompte)
+                                )
+                                .Select(ed => ed.id_prestation)
+                                .Contains(prestation.id_prestation)
                         )
-                        .Select(ed => ed.id_prestation)
-                        .Contains(prestation.id_prestation)
-                )
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.delaiaccorder, true));
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.delaiaccorder, true));
+
+                    // Valide la transaction si tout s'est bien passé
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    // Annule la transaction en cas d'erreur
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         //afficher tout les delai qui ont été accorder
@@ -90,7 +106,7 @@ namespace LIMS_PaiementBack.Repositories
             var dernierIdEtatDecompte = id_etat_decompte;
 
             // recherche du client via l'id_etat_decompte
-            // Recherche du client en fonction d’un identifiant d’état de décompte (dernierIdEtatDecompte)
+            // Recherche du client en fonction d'un identifiant d'état de décompte (dernierIdEtatDecompte)
             var clientIdentity = await (
                 from client in _dbContext.Client
                 join prestation in _dbContext.Prestation on client.id_client equals prestation.id_client
@@ -139,7 +155,7 @@ namespace LIMS_PaiementBack.Repositories
                                 datePaiement = contratpartenaire.datePaiement
                             }).FirstOrDefaultAsync();
                     */
-                    // Création d’un DTO de paiement associé à ce contrat
+                    // Création d'un DTO de paiement associé à ce contrat
                     var paiement = new PaiementDto
                     {
                         clients = clientIdentity.Nom,
@@ -204,34 +220,7 @@ namespace LIMS_PaiementBack.Repositories
                     nombreEchantillon = grouped.Sum(g => g.echantillonGroup.Count()) // Compter les échantillons pour chaque prestation
                 }).ToListAsync();
 
-            /*var query2 = await (
-                from client in _dbContext.Client
-                join prestation in _dbContext.Prestation on client.id_client equals prestation.id_client
-                join etatDecompte in _dbContext.Etat_decompte on prestation.id_prestation equals etatDecompte.id_prestation
-                join echantillon in _dbContext.Echantillon on prestation.id_prestation equals echantillon.id_prestation into echantillonGroup
-                from echantillons in echantillonGroup.DefaultIfEmpty() // Left Join
-                join paiement in _dbContext.Paiement on etatDecompte.id_etat_decompte equals paiement.id_etat_decompte into paiementGroup
-                from paiements in paiementGroup.DefaultIfEmpty() // Left Join pour capturer les paiements inexistants
-                where paiements == null // Filtrer les id_etat_decompte qui ne sont pas dans Paiement
-                      && client.Nom == clientIdentity.Nom
-                      && client.Adresse == clientIdentity.Adresse
-                      && (client.CIN == clientIdentity.Identity || client.Passport == clientIdentity.Identity)
-                group new { etatDecompte, echantillons } by new
-                {
-                    prestation.id_prestation,
-                    etatDecompte.id_etat_decompte,
-                    etatDecompte.date_etat_decompte,
-                    etatDecompte.ReferenceEtatDecompte
-                } into grouped
-                select new
-                {
-                    id_etat_decompte = grouped.Key.id_etat_decompte,
-                    DatePaiement = grouped.Key.date_etat_decompte,
-                    ReferenceEtatDecompte = grouped.Key.ReferenceEtatDecompte,
-                    NombreEchantillon = grouped.Sum(g => g.echantillons != null ? 1 : 0) // Compter les échantillons existants
-                }).ToListAsync();*/
-            
-            // Deuxième requête : vérifier s’il existe un Etat_decompte sans paiement associé
+            // Deuxième requête : vérifier s'il existe un Etat_decompte sans paiement associé
             var query2 = await (
                 from etatDecompte in _dbContext.Etat_decompte
                 // Join avec Prestation via id_prestation
@@ -243,10 +232,11 @@ namespace LIMS_PaiementBack.Repositories
                 from paiements in paiementGroup.DefaultIfEmpty() // Left Join pour détecter les absents
                 // Filtrage : ne garder que ceux qui n'ont PAS de paiement
                 where paiements == null // Garde ceux qui n'ont pas de paiement
-                        // Assurer que c’est bien le bon client
+                        // Assurer que c'est bien le bon client
                         && client.Nom == clientIdentity.Nom
                         && client.Adresse == clientIdentity.Adresse
                         && (client.CIN == clientIdentity.Identity || client.Passport == clientIdentity.Identity)
+                        && etatDecompte.id_etat_decompte == dernierIdEtatDecompte
                 // On récupère l'id de l'etat_decompte sans paiement
                 select etatDecompte.id_etat_decompte
                 ).FirstOrDefaultAsync();
@@ -257,7 +247,7 @@ namespace LIMS_PaiementBack.Repositories
                 Data = query, // Liste des prestations déjà payées avec infos (DelaiDto)
                 ViewBag = new Dictionary<string, object>
                 {
-                    {"id_etat_decompte", query2} // Etat de décompte non encore payé (s’il y en a un)
+                    {"id_etat_decompte", query2} // Etat de décompte non encore payé (s'il y en a un)
                 },
                 Message = "vérifier",
                 IsSuccess = true,
@@ -431,8 +421,8 @@ namespace LIMS_PaiementBack.Repositories
                 from etat_decompte in _dbContext.Etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
-                where prestation.status_paiement == false 
-                        && client.IsInterne == false
+                where prestation.status_paiement == false // prestation.status_paiement == true
+                        && client.IsInterne == false // client.IsInterne == true
                         && prestation.delaiaccorder == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
@@ -452,6 +442,7 @@ namespace LIMS_PaiementBack.Repositories
                 IsSuccess = true,
                 StatusCode = 200
             };
+
         }
         
     }
