@@ -22,25 +22,39 @@ namespace LIMS_PaiementBack.Repositories
         */
         public async Task AddRecuMobilePaiement(ReceptionMobileEntity recu)
         {
-            await _dbContext.ReceptionMobile.AddAsync(recu);
-            await _dbContext.SaveChangesAsync();
+            // Ajout d'une transaction pour garantir l'intégrité des opérations
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _dbContext.ReceptionMobile.AddAsync(recu);
+                    await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Paiement
-                .Where(x => x.idPaiement == recu.idPaiement)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, true));
+                    await _dbContext.Paiement
+                        .Where(x => x.idPaiement == recu.idPaiement)
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.EtatPaiement, true));
 
-            await _dbContext.Prestation
-                .Where(prestation =>
-                    _dbContext.Etat_decompte
-                        .Where(ed => _dbContext.Paiement
-                            .Where(p => p.idPaiement == recu.idPaiement)
-                            .Select(p => p.id_etat_decompte)
-                            .Contains(ed.id_etat_decompte)
+                    await _dbContext.Prestation
+                        .Where(prestation =>
+                            _dbContext.Etat_decompte
+                                .Where(ed => _dbContext.Paiement
+                                    .Where(p => p.idPaiement == recu.idPaiement)
+                                    .Select(p => p.id_etat_decompte)
+                                    .Contains(ed.id_etat_decompte)
+                                )
+                                .Select(ed => ed.id_prestation)
+                                .Contains(prestation.id_prestation)
                         )
-                        .Select(ed => ed.id_prestation)
-                        .Contains(prestation.id_prestation)
-                )
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         public async Task<ApiResponse> GetDataMobileAPayer()
