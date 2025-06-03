@@ -25,30 +25,45 @@ namespace LIMS_PaiementBack.Repositories
         // public async Task AddSousContrat(PaiementEntity paiement, int id_partenaire)
         public async Task AddSousContrat(PaiementEntity paiement)
         {
-            await _dbContext.Paiement.AddAsync(paiement);
-            await _dbContext.SaveChangesAsync();
-
-            var contrat = new SousContratEntity
+            // Ajout d'une transaction pour garantir l'intégrité des opérations
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-                idPaiement = paiement.idPaiement,
-                // idPartenaire = id_partenaire
-            };
+                try
+                {
+                    await _dbContext.Paiement.AddAsync(paiement);
+                    await _dbContext.SaveChangesAsync();
 
-            await _dbContext.SousContrats.AddAsync(contrat);
-            await _dbContext.SaveChangesAsync();
+                    var contrat = new SousContratEntity
+                    {
+                        idPaiement = paiement.idPaiement,
+                        // idPartenaire = id_partenaire
+                    };
 
-            // await _dbContext.Prestation
-            //     .Where(prestation =>
-            //         _dbContext.Etat_decompte
-            //             .Where(ed => _dbContext.Paiement
-            //                 .Where(p => p.idPaiement == paiement.idPaiement)
-            //                 .Select(p => p.id_etat_decompte)
-            //                 .Contains(ed.id_etat_decompte)
-            //             )
-            //             .Select(ed => ed.id_prestation)
-            //             .Contains(prestation.id_prestation)
-            //     )
-            //     .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 5));
+                    await _dbContext.SousContrats.AddAsync(contrat);
+                    await _dbContext.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+            /*
+                // await _dbContext.Prestation
+                //     .Where(prestation =>
+                //         _dbContext.Etat_decompte
+                //             .Where(ed => _dbContext.Paiement
+                //                 .Where(p => p.idPaiement == paiement.idPaiement)
+                //                 .Select(p => p.id_etat_decompte)
+                //                 .Contains(ed.id_etat_decompte)
+                //             )
+                //             .Select(ed => ed.id_prestation)
+                //             .Contains(prestation.id_prestation)
+                //     )
+                //     .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 5));
+            */
         }
 
         /*

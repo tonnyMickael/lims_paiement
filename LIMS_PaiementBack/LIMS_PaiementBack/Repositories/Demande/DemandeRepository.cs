@@ -29,119 +29,112 @@ namespace LIMS_PaiementBack.Repositories
         */
         public async Task<List<byte[]>> AddDemandeAsync(DemandeEntity demande, DemandeDto demandeDto)
         {
-            // 1. Récupérer la dernière référence dans Depart (en tant qu'entier)
-            int lastRef = await _dbContext.Depart
-                .OrderByDescending(d => d.reference)
-                .Select(d => d.reference)
-                .FirstOrDefaultAsync();
-
-            int newReference = lastRef + 1;
-
-            // 2. Mise à jour de l'état de la prestation pour la demande de note de débit
-            await _dbContext.Prestation
-                .Where(p => p.id_prestation == _dbContext.Etat_decompte
-                    .Where(e => e.id_etat_decompte == demande.id_etat_decompte)
-                    .Select(e => e.id_prestation)
-                    .FirstOrDefault())
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.demandeEffectuer, true));            
-
-            // 3. Récupérer les infos pour créer le départ
-            var infos = await (
-                from ed in _dbContext.Etat_decompte
-                join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
-                join c in _dbContext.Client on p.id_client equals c.id_client
-                where ed.id_etat_decompte == demande.id_etat_decompte
-                select new
-                {
-                    ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
-                    NomClient = c.Nom,
-                }).FirstOrDefaultAsync();
-
-            if (infos == null)
-                throw new Exception("Impossible de récupérer les informations liées à la demande.");
-
-            // 4. Récupérer l'identifiant du destinataire
-            int id_destinataire = await _dbContext.Destinataire
-                .Where(d => d.designation == "Département Administratif et Financier")
-                .Select(c => c.idDestinataire)
-                .FirstOrDefaultAsync();
-
-            // 5. Créer l’objet DepartEntity
-            var depart = new DepartEntity
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
-                reference = newReference,
-                objet = $"Demande d'Etablissement de note de débit {infos.ReferenceEtatDecompte} au nom de {infos.NomClient} d'un montant de {demande.montant} ar",
-                DateDepart = DateTime.Now,
-                idDestinataire = id_destinataire// tu dois avoir ça dans ta demande
-            };
-
-            // 6. Affecter la référence à la demande
-            demande.reference = newReference; // Mettre à jour la référence dans la demande
-
-            // 7. Enregistrer demande et départ
-            await _dbContext.DemandeNoteDebit.AddAsync(demande);
-            await _dbContext.Depart.AddAsync(depart);
-            await _dbContext.SaveChangesAsync();   
-
-            /*var infoTable = await (
-                from typeEchantillon in _dbContext.Type_echantillon
-                join echantillon in _dbContext.Echantillon on typeEchantillon.id_type_echantillon equals echantillon.id_type_echantillon
-                join prestation in _dbContext.Prestation on echantillon.id_prestation equals prestation.id_prestation
-                join etatDecompte in _dbContext.Etat_decompte on prestation.id_prestation equals etatDecompte.id_prestation
-                join detailEtatDecompte in _dbContext.details_etat_decompte on etatDecompte.id_etat_decompte equals detailEtatDecompte.id_etat_decompte
-                join typeTravaux in _dbContext.Type_travaux on detailEtatDecompte.id_type_travaux equals typeTravaux.id_type_travaux
-                where etatDecompte.id_etat_decompte == demande.id_etat_decompte && etatDecompte.date_etat_decompte.Date == DateTime.Today.Date// ← ton filtre ici
-                group detailEtatDecompte by new { typeTravaux.designation, detailEtatDecompte.prix_unitaire } into g
-                select new TravauxInfo
+                try
                 {
-                    Designation = g.Key.designation,
-                    Nombre = g.Count(),
-                    PrixUnitaire = g.Key.prix_unitaire,
-                }
-            ).ToListAsync();*/
+                    // 1. Récupérer la dernière référence dans Depart (en tant qu'entier)
+                    int lastRef = await _dbContext.Depart
+                        .OrderByDescending(d => d.reference)
+                        .Select(d => d.reference)
+                        .FirstOrDefaultAsync();
 
-            var travauxInfos = await (
-                    from typeTravaux in _dbContext.Type_travaux
-                    join detailEtatDecompte in _dbContext.Details_etat_decompte 
-                        on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
-                    join etatDecompte in _dbContext.Etat_decompte 
-                        on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
-                    join prestation in _dbContext.Prestation 
-                        on etatDecompte.id_prestation equals prestation.id_prestation
-                    join echantillon in _dbContext.Echantillon 
-                        on prestation.id_prestation equals echantillon.id_prestation
-                    join typeEchantillon in _dbContext.Type_echantillon 
-                        on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
-                    join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
-                        on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
-                        equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
-                    where 
-                        etatDecompte.id_etat_decompte == demande.id_etat_decompte
-                        //prestation.id_prestation == 26
-                    group detailEtatDecompte by new 
-                    { 
-                        typeTravaux.designation, 
-                        detailEtatDecompte.prix_unitaire 
-                    } into g
-                    select new TravauxInfo
+                    int newReference = lastRef + 1;
+
+                    // 2. Mise à jour de l'état de la prestation pour la demande de note de débit
+                    await _dbContext.Prestation
+                        .Where(p => p.id_prestation == _dbContext.Etat_decompte
+                            .Where(e => e.id_etat_decompte == demande.id_etat_decompte)
+                            .Select(e => e.id_prestation)
+                            .FirstOrDefault())
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.demandeEffectuer, true));            
+
+                    // 3. Récupérer les infos pour créer le départ
+                    var infos = await (
+                        from ed in _dbContext.Etat_decompte
+                        join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
+                        join c in _dbContext.Client on p.id_client equals c.id_client
+                        where ed.id_etat_decompte == demande.id_etat_decompte
+                        select new
+                        {
+                            ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
+                            NomClient = c.Nom,
+                        }).FirstOrDefaultAsync();
+
+                    if (infos == null)
+                        throw new Exception("Impossible de récupérer les informations liées à la demande.");
+
+                    // 4. Récupérer l'identifiant du destinataire
+                    int id_destinataire = await _dbContext.Destinataire
+                        .Where(d => d.designation == "Département Administratif et Financier")
+                        .Select(c => c.idDestinataire)
+                        .FirstOrDefaultAsync();
+
+                    // 5. Créer l'objet DepartEntity
+                    var depart = new DepartEntity
                     {
-                        Designation = g.Key.designation,
-                        Nombre = g.Count(),
-                        PrixUnitaire = g.Key.prix_unitaire
-                    }).ToListAsync();
+                        reference = newReference,
+                        objet = $"Demande d'Etablissement de note de débit {infos.ReferenceEtatDecompte} au nom de {infos.NomClient} d'un montant de {demande.montant} ar",
+                        DateDepart = DateTime.Now,
+                        idDestinataire = id_destinataire
+                    };
 
-            // 8. Générer le PDF
-            byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
-            byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
+                    // 6. Affecter la référence à la demande
+                    demande.reference = newReference;
 
-            // Console.WriteLine($"PDF 1: {pdfBytes.Length} octets");
-            // Console.WriteLine($"PDF 2: {pdfBytes2.Length} octets");
+                    // 7. Enregistrer demande et départ
+                    await _dbContext.DemandeNoteDebit.AddAsync(demande);
+                    await _dbContext.Depart.AddAsync(depart);
+                    await _dbContext.SaveChangesAsync();
 
-            List<byte[]> pdfBytesList = new List<byte[]>();
-            pdfBytesList.Add(pdfBytes);
-            pdfBytesList.Add(pdfBytes2);
+                    var travauxInfos = await (
+                            from typeTravaux in _dbContext.Type_travaux
+                            join detailEtatDecompte in _dbContext.Details_etat_decompte 
+                                on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
+                            join etatDecompte in _dbContext.Etat_decompte 
+                                on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
+                            join prestation in _dbContext.Prestation 
+                                on etatDecompte.id_prestation equals prestation.id_prestation
+                            join echantillon in _dbContext.Echantillon 
+                                on prestation.id_prestation equals echantillon.id_prestation
+                            join typeEchantillon in _dbContext.Type_echantillon 
+                                on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
+                            join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
+                                on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
+                                equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
+                            where 
+                                etatDecompte.id_etat_decompte == demande.id_etat_decompte
+                            group detailEtatDecompte by new 
+                            { 
+                                typeTravaux.designation, 
+                                detailEtatDecompte.prix_unitaire 
+                            } into g
+                            select new TravauxInfo
+                            {
+                                Designation = g.Key.designation,
+                                Nombre = g.Count(),
+                                PrixUnitaire = g.Key.prix_unitaire
+                            }).ToListAsync();
 
-            return pdfBytesList;
+                    // 8. Générer les PDF (hors transaction car ce n'est pas en base)
+                    byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
+                    byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
+
+                    List<byte[]> pdfBytesList = new List<byte[]>();
+                    pdfBytesList.Add(pdfBytes);
+                    pdfBytesList.Add(pdfBytes2);
+
+                    // 9. Valider la transaction
+                    await transaction.CommitAsync();
+
+                    return pdfBytesList;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         // liste des demande de note de débit éffectuer
