@@ -54,7 +54,9 @@ namespace LIMS_PaiementBack.Repositories
                             .Select(p => p.id_etat_decompte)
                             .Contains(ed.id_etat_decompte)
                         ))
-                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, DateTime.Now));
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, DateTime.Now))
+                        // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
 
                     await transaction.CommitAsync();
                 }

@@ -424,8 +424,8 @@ namespace LIMS_PaiementBack.Repositories
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 where prestation.status_paiement == false
                 // where prestation.status_paiement == true
-                    // && client.IsInterne == true // 
-                        && client.IsInterne == false
+                    && client.IsInterne == true // 
+                        // && client.IsInterne == false
                         && prestation.delaiaccorder == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto

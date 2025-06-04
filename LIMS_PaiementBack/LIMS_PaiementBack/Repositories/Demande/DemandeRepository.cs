@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using Humanizer;
+using System.Text.Json;
 
 namespace LIMS_PaiementBack.Repositories
 {
@@ -139,6 +140,7 @@ namespace LIMS_PaiementBack.Repositories
                         }).ToListAsync();    
 
                     // 8. Générer les PDF (hors transaction car ce n'est pas en base)
+                    Console.WriteLine("LES TRAVAUUXXXXXXXX : "+JsonSerializer.Serialize(travauxInfos));
                     byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
                     byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
 
