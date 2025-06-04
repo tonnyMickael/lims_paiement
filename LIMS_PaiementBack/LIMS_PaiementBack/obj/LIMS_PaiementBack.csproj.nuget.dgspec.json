@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\LIMS_PaiementBack.csproj": {}
+    "/home/miaro/ASA/OMNIS/LIMS/PROJECT/lims_paiement/LIMS_PaiementBack/LIMS_PaiementBack/LIMS_PaiementBack.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\LIMS_PaiementBack.csproj": {
+    "/home/miaro/ASA/OMNIS/LIMS/PROJECT/lims_paiement/LIMS_PaiementBack/LIMS_PaiementBack/LIMS_PaiementBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\LIMS_PaiementBack.csproj",
+        "projectUniqueName": "/home/miaro/ASA/OMNIS/LIMS/PROJECT/lims_paiement/LIMS_PaiementBack/LIMS_PaiementBack/LIMS_PaiementBack.csproj",
         "projectName": "LIMS_PaiementBack",
-        "projectPath": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\LIMS_PaiementBack.csproj",
-        "packagesPath": "C:\\Users\\AndyMickael\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AndyMickael\\Desktop\\OMNIS\\tests\\lims_paiement\\LIMS_PaiementBack\\LIMS_PaiementBack\\obj\\",
+        "projectPath": "/home/miaro/ASA/OMNIS/LIMS/PROJECT/lims_paiement/LIMS_PaiementBack/LIMS_PaiementBack/LIMS_PaiementBack.csproj",
+        "packagesPath": "/home/miaro/.nuget/packages/",
+        "outputPath": "/home/miaro/ASA/OMNIS/LIMS/PROJECT/lims_paiement/LIMS_PaiementBack/LIMS_PaiementBack/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\AndyMickael\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/miaro/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -42,25 +36,36 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "all"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+          "auditMode": "direct"
+        }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
             "Humanizer": {
               "target": "Package",
               "version": "[2.14.1, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
-              "version": "[8.0.2, )"
+              "version": "[8.0.3, )"
+            },
+            "QuestPDF": {
+              "target": "Package",
+              "version": "[2025.1.7, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[8.1.0, )"
+            },
+            "Twilio": {
+              "target": "Package",
+              "version": "[7.9.1, )"
             }
           },
           "imports": [
@@ -82,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.407/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
