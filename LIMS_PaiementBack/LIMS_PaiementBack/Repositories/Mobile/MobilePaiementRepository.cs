@@ -16,8 +16,26 @@ namespace LIMS_PaiementBack.Repositories
 
         public async Task AddPaiementMobile(PaiementEntity paiement)
         {
-            await _dbContext.Paiement.AddAsync(paiement);
-            await _dbContext.SaveChangesAsync();
+            // Mettre les opérations en transaction pour garantir l'intégrité
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _dbContext.Paiement.AddAsync(paiement);
+                    await _dbContext.SaveChangesAsync();
+
+                    await _dbContext.Etat_decompte
+                        .Where(e => e.id_etat_decompte == paiement.id_etat_decompte)
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, paiement.DatePaiement));
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
         public async Task<ApiResponse> GetDataPaiementMobile(int id_etat_decompte)
