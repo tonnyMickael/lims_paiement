@@ -14,7 +14,7 @@ namespace LIMS_PaiementBack.Entities
         [Column("reference")]
         public string ReferenceEtatDecompte { get; set; } = string.Empty;
         public DateTime date_etat_decompte { get; set; }
-
+        public DateTime date_paiement { get; set; }
         [ForeignKey(nameof(id_prestation))]
         public PrestationEntity? prestattion {  get; set; }
 

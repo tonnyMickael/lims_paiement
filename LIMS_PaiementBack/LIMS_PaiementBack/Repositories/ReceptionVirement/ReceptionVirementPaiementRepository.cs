@@ -46,6 +46,7 @@ namespace LIMS_PaiementBack.Repositories
                                 .Contains(prestation.id_prestation)
                         )
                         .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                        // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
 
                     await transaction.CommitAsync();
                 }
