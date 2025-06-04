@@ -4,6 +4,7 @@ using LIMS_PaiementBack.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.Text.Json;
 
 namespace LIMS_PaiementBack.Repositories
 {
@@ -92,7 +93,7 @@ namespace LIMS_PaiementBack.Repositories
         /*
          Condition:
             1. Avoir fait des testes de plus 600 échantillon ou plus 
-            2. Etre dans la période de 6 mois si c'est suffisant sinon voir 1 an 
+            2. Etre dans la période de 6 mois si c'est suffisant sinon voir 1 an
             3. les clients sous-contrat pas de test pour accorder un délai
          */
         /*
@@ -422,9 +423,9 @@ namespace LIMS_PaiementBack.Repositories
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 where prestation.status_paiement == false
-                 // where prestation.status_paiement == true
-                        && client.IsInterne == false 
-                        // && client.IsInterne == true
+                // where prestation.status_paiement == true
+                    // && client.IsInterne == true // 
+                        && client.IsInterne == false
                         && prestation.delaiaccorder == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new PaiementDto
