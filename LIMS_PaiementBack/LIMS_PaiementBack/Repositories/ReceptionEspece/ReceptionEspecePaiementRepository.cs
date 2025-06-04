@@ -48,6 +48,14 @@ namespace LIMS_PaiementBack.Repositories
                         )
                         .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
                         // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
+                    
+                    await _dbContext.Etat_decompte
+                        .Where((ed => _dbContext.Paiement
+                            .Where(p => p.idPaiement == recu.idPaiement)
+                            .Select(p => p.id_etat_decompte)
+                            .Contains(ed.id_etat_decompte)
+                        ))
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, DateTime.Now));
 
                     await transaction.CommitAsync();
                 }

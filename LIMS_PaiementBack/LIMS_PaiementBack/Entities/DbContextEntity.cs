@@ -45,9 +45,9 @@ namespace LIMS_PaiementBack.Entities
             modelBuilder.Entity<TypeTravauxEntity>().ToTable("Type_travaux");
             modelBuilder.Entity<DestinataireEntity>().ToTable("Destinataire");
             modelBuilder.Entity<EtatDecompteEntity>().ToTable("Etat_decompte");
-            modelBuilder.Entity<TypeEchantillonEntity>().ToTable("Type_echantillon");
+            modelBuilder.Entity<TypeEchantillonEntity>().ToTable("type_echantillon");
             modelBuilder.Entity<Details_etat_decompte_Entity>().ToTable("Details_etat_decompte");
-            modelBuilder.Entity<Type_travaux_type_echantillonEntity>().ToTable("Type_travaux_type_echantillon").HasKey(e => new { e.id_type_echantillon, e.id_type_travaux });
+            modelBuilder.Entity<Type_travaux_type_echantillonEntity>().ToTable("type_travaux_type_echantillon").HasKey(e => new { e.id_type_echantillon, e.id_type_travaux });
             
             //modelBuilder.Entity<EtatPrestationEntity>().ToTable("Etat_prestation");
 

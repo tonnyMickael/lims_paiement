@@ -13,9 +13,9 @@ namespace LIMS_PaiementBack.Entities
         public int reference { get; set; }
         [Column("objet")]
         public string objet { get; set; } = string.Empty;
-        [Column("date_depart")]
+        [Column("datedepart")]
         public DateTime DateDepart { get; set; }
-        [Column("id_destinataire")]
+        [Column("iddestinataire")]
         public int idDestinataire { get; set; }
 
         [ForeignKey(nameof(idDestinataire))]

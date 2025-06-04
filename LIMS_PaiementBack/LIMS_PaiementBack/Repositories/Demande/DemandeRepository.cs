@@ -66,7 +66,7 @@ namespace LIMS_PaiementBack.Repositories
 
                     // 4. Récupérer l'identifiant du destinataire
                     int id_destinataire = await _dbContext.Destinataire
-                        .Where(d => d.designation == "Département Administratif et Financier")
+                        .Where(d => d.designation == "Département Administratif et Financier")//rectifier ici pour reconnaitre les diminitifs minuscule et masjucule 
                         .Select(c => c.idDestinataire)
                         .FirstOrDefaultAsync();
 
@@ -87,34 +87,56 @@ namespace LIMS_PaiementBack.Repositories
                     await _dbContext.Depart.AddAsync(depart);
                     await _dbContext.SaveChangesAsync();
 
+                    /*
+                        var travauxInfos = await (
+                                from typeTravaux in _dbContext.Type_travaux
+                                join detailEtatDecompte in _dbContext.Details_etat_decompte 
+                                    on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
+                                join etatDecompte in _dbContext.Etat_decompte 
+                                    on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
+                                join prestation in _dbContext.Prestation 
+                                    on etatDecompte.id_prestation equals prestation.id_prestation
+                                join echantillon in _dbContext.Echantillon 
+                                    on prestation.id_prestation equals echantillon.id_prestation
+                                join typeEchantillon in _dbContext.Type_echantillon 
+                                    on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
+                                join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
+                                    on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
+                                    equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
+                                where 
+                                    etatDecompte.id_etat_decompte == demande.id_etat_decompte
+                                group detailEtatDecompte by new 
+                                { 
+                                    typeTravaux.designation, 
+                                    detailEtatDecompte.prix_unitaire 
+                                } into g
+                                select new TravauxInfo
+                                {
+                                    Designation = g.Key.designation,
+                                    Nombre = g.Count(),
+                                    PrixUnitaire = g.Key.prix_unitaire
+                                }).ToListAsync();                                        
+                    */
+                   
+                    /*
+                        select type_travaux.designation, details_etat_decompte.nombre, details_etat_decompte.prix_unitaire 
+                        from details_etat_decompte
+                            inner join type_travaux 
+                                on details_etat_decompte.id_type_travaux = type_travaux.id_type_travaux
+                        where id_etat_decompte = 11;
+                    */
+
                     var travauxInfos = await (
-                            from typeTravaux in _dbContext.Type_travaux
-                            join detailEtatDecompte in _dbContext.Details_etat_decompte 
-                                on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
-                            join etatDecompte in _dbContext.Etat_decompte 
-                                on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
-                            join prestation in _dbContext.Prestation 
-                                on etatDecompte.id_prestation equals prestation.id_prestation
-                            join echantillon in _dbContext.Echantillon 
-                                on prestation.id_prestation equals echantillon.id_prestation
-                            join typeEchantillon in _dbContext.Type_echantillon 
-                                on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
-                            join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
-                                on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
-                                equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
-                            where 
-                                etatDecompte.id_etat_decompte == demande.id_etat_decompte
-                            group detailEtatDecompte by new 
-                            { 
-                                typeTravaux.designation, 
-                                detailEtatDecompte.prix_unitaire 
-                            } into g
-                            select new TravauxInfo
-                            {
-                                Designation = g.Key.designation,
-                                Nombre = g.Count(),
-                                PrixUnitaire = g.Key.prix_unitaire
-                            }).ToListAsync();
+                        from details_etat_decompte in _dbContext.Details_etat_decompte
+                        join type_travaux in _dbContext.Type_travaux
+                            on details_etat_decompte.id_type_travaux equals type_travaux.id_type_travaux
+                        where details_etat_decompte.id_etat_decompte == demande.id_etat_decompte
+                        select new TravauxInfo
+                        {
+                            Designation = type_travaux.designation,
+                            Nombre = details_etat_decompte.nombre,
+                            PrixUnitaire = details_etat_decompte.prix_unitaire
+                        }).ToListAsync();    
 
                     // 8. Générer les PDF (hors transaction car ce n'est pas en base)
                     byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
@@ -264,7 +286,8 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true // prestation.status_paiement == false
+                where prestation.status_paiement == true 
+                // where prestation.status_paiement == false
                     && prestation.demandeEffectuer == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new
@@ -310,7 +333,8 @@ namespace LIMS_PaiementBack.Repositories
                 */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true // prestation.status_paiement == false
+                where prestation.status_paiement == true
+                // where prestation.status_paiement == false
                     && prestation.demandeEffectuer == false 
                     && etat_decompte.date_etat_decompte == today
                 orderby etat_decompte.date_etat_decompte descending

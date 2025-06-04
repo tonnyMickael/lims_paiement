@@ -24,9 +24,9 @@ namespace LIMS_PaiementBack.Repositories
                     await _dbContext.Paiement.AddAsync(paiement);
                     await _dbContext.SaveChangesAsync();
 
-                    await _dbContext.Etat_decompte
-                        .Where(e => e.id_etat_decompte == paiement.id_etat_decompte)
-                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, paiement.DatePaiement));
+                    // await _dbContext.Etat_decompte
+                    //     .Where(e => e.id_etat_decompte == paiement.id_etat_decompte)
+                    //     .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, paiement.DatePaiement));
 
                     await transaction.CommitAsync();
                 }
