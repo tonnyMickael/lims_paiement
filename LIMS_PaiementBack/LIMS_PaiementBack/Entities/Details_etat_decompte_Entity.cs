@@ -12,6 +12,7 @@ namespace LIMS_PaiementBack.Entities
     {
         [Key]
         public int id_details_etat_decompte { get; set; }
+        public int nombre { get; set; }
         public double prix_unitaire { get; set; }
         public int id_etat_decompte { get; set; }
         public int id_type_travaux { get; set; }

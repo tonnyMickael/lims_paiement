@@ -166,6 +166,7 @@ namespace LIMS_PaiementBack.Repositories
                     .Contains(prestation.id_prestation)
                 )
                 .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
 
             var paiement = await _dbContext.Paiement.FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte);
             if (paiement != null)

@@ -29,10 +29,10 @@ namespace LIMS_PaiementBack.Controllers
             var pdfURL = await _service.AddDemandeAsync(demande);
 
             var pdfBase64List = pdfURL.Select(pdf => Convert.ToBase64String(pdf)).ToList();
-            foreach (var base64 in pdfBase64List)
-            {
-                Console.WriteLine("Controller back:"+base64);
-            }
+            // foreach (var base64 in pdfBase64List)
+            // {
+            //     Console.WriteLine("Controller back:"+base64);
+            // }
 
             var reponse = new ApiResponse
             {
