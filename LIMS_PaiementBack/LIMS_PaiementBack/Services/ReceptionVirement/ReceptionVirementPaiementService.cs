@@ -21,6 +21,7 @@ namespace LIMS_PaiementBack.Services
             var recepeiton = new OrdreDeVirementEntity
             {
                 reference = recu.referenceOV,
+                id_banque = recu.id_banque,
                 idPaiement = recu.id_paiement
             };
 
@@ -32,6 +33,11 @@ namespace LIMS_PaiementBack.Services
                 await _email.SendEmailAsync(paiement.email, "Confirmation de paiement",
                     $"Votre paiement de {paiement.montant} a été reçu avec succès.");
             }*/
+        }
+
+        public async Task<ApiResponse> ListeBanqueAsync()
+        {
+            return await _receptionVirementPaiementRepository.ListeBanque();
         }
 
         public async Task<ApiResponse> GetVirementAPayer()

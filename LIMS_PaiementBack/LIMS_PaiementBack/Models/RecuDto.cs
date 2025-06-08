@@ -11,6 +11,7 @@
 
         //reception virement
         public string? referenceOV { get; set; }
+        public int id_banque { get; set; }
 
         //attribut commun
         public double montantApayer { get; set; }

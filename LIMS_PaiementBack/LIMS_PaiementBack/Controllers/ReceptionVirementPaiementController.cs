@@ -25,6 +25,13 @@ namespace LIMS_PaiementBack.Controllers
             return Ok(paiementEspece);
         }
 
+        [HttpGet("banqueListe")]
+        public async Task<IActionResult> GetListeBanque()
+        {
+            var listebanque = await _receptionVirementPaiement.ListeBanqueAsync();
+            return Ok(listebanque);
+        }
+
         [HttpPost]
         public async Task<IActionResult> VirementRecu([FromBody] RecuDto recu)
         {

@@ -45,8 +45,8 @@ namespace LIMS_PaiementBack.Repositories
                                 .Select(ed => ed.id_prestation)
                                 .Contains(prestation.id_prestation)
                         )
-                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
-                        // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
+                        // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
                     
                     await _dbContext.Etat_decompte
                         .Where((ed => _dbContext.Paiement
@@ -66,6 +66,20 @@ namespace LIMS_PaiementBack.Repositories
                     throw;
                 }
             }
+        }
+
+        public async Task<ApiResponse> ListeBanque()
+        {
+
+            var banque = await _dbContext.Banque.ToListAsync();
+
+            return new ApiResponse
+            {
+                Data = banque,                
+                Message = "succes",
+                IsSuccess = true,
+                StatusCode = 200
+            };
         }
 
         public async Task<ApiResponse> GetDataVirementAPayer()
@@ -133,7 +147,8 @@ namespace LIMS_PaiementBack.Repositories
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation 
                 where (paiement.id_modePaiement == 3 || paiement.id_modePaiement == 4)
-                        && paiement.EtatPaiement == false
+                        && paiement.EtatPaiement == true
+                        // && paiement.EtatPaiement == false
                         && etat_decompte.id_etat_decompte == id_etat_decompte
                 orderby paiement.idPaiement descending
                 select new RecuDto

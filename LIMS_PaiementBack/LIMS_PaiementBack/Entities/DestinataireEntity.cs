@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LIMS_PaiementBack.Entities
 {
-    [Table("destinataire")]
+    [Table("Destinataire")]
     public class DestinataireEntity
     {
         [Key]

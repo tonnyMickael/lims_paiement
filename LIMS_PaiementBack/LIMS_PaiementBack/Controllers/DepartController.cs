@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LIMS_PaiementBack.Models;
 using LIMS_PaiementBack.Services.Depart;
@@ -34,13 +35,23 @@ namespace LIMS_PaiementBack.Controllers
             return Ok(destinataires);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddDepart([FromBody]DepartDto depart)
+        [HttpPost("addDepart")]
+        //public async Task<IActionResult> AddDepart([FromBody]DepartDto depart)
+        public async Task<IActionResult> AddDepart(DepartDto depart)
         {            
+            // Console.WriteLine($"Envoi des données entree 1 : {JsonSerializer.Serialize(depart)}");
+
             if (depart == null)
             {
                 return BadRequest("Les données du depart sont invalides.");
             }
+
+            if (string.IsNullOrEmpty(depart.objet))
+            {
+                // Console.WriteLine($"Envoi des données entree 2 : {JsonSerializer.Serialize(depart)}");
+                return BadRequest("L'objet du depart est obligatoire.");
+            }
+                       
             await _depart.AddDepart(depart);
 
             var reponse = new ApiResponse

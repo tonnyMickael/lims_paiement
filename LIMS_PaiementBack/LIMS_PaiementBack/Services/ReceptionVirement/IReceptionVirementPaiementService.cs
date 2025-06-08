@@ -7,6 +7,7 @@ namespace LIMS_PaiementBack.Services
     {
         Task<ApiResponse> GetVirementAPayer();
         Task AddVirementPaiementRecu(RecuDto recu);
+        Task<ApiResponse> ListeBanqueAsync();
         Task<ApiResponse> GetVirementAConfirmer(int id_etat_decompte);
     }
 }
