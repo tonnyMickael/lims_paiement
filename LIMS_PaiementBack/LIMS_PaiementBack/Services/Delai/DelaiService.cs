@@ -113,7 +113,8 @@ namespace LIMS_PaiementBack.Services
 
             // Vérifier si le total atteint 600 en 6 mois
             //if (totalEchantillons6Mois >= 600)
-            if (totalEchantillons6Mois >= 5)
+            // if (totalEchantillons6Mois >= 5)
+            if (totalEchantillons6Mois >= 1)
             {
                 return new ApiResponse
                 {
@@ -136,7 +137,8 @@ namespace LIMS_PaiementBack.Services
 
             // Vérifier si le total atteint 600 en 1 an
             //if (totalEchantillons1An >= 600)
-            if (totalEchantillons1An >= 5)
+            // if (totalEchantillons1An >= 5)
+            if (totalEchantillons1An >= 1)
             {
                 return new ApiResponse
                 {

@@ -87,6 +87,9 @@ builder.Services.AddScoped<IEtatHebdomadaireService, EtatHebdomadaireService>();
 builder.Services.AddScoped<IDepartRepository, DepartRepository>();
 builder.Services.AddScoped<IDepartService, DepartService>();
 
+builder.Services.AddScoped<IBanqueRepository, BanqueRepository>();
+builder.Services.AddScoped<IBanqueService, BanqueService>();
+
 builder.Services.AddScoped<Email>();
 
 var app = builder.Build();
@@ -98,7 +101,7 @@ if (app.Environment.IsDevelopment())
    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

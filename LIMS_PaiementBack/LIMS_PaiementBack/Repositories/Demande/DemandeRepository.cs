@@ -76,7 +76,8 @@ namespace LIMS_PaiementBack.Repositories
                         reference = newReference,
                         objet = $"Demande d'Etablissement de note de débit {infos.ReferenceEtatDecompte} au nom de {infos.NomClient} d'un montant de {demande.montant} ar",
                         DateDepart = DateTime.Now,
-                        idDestinataire = id_destinataire
+                        // idDestinataire = id_destinataire
+                        idDestinataire = demandeDto.id_destinataire
                     };
 
                     // 6. Affecter la référence à la demande
@@ -87,37 +88,6 @@ namespace LIMS_PaiementBack.Repositories
                     await _dbContext.Depart.AddAsync(depart);
                     await _dbContext.SaveChangesAsync();
 
-                    /*
-                        var travauxInfos = await (
-                                from typeTravaux in _dbContext.Type_travaux
-                                join detailEtatDecompte in _dbContext.Details_etat_decompte 
-                                    on typeTravaux.id_type_travaux equals detailEtatDecompte.id_type_travaux
-                                join etatDecompte in _dbContext.Etat_decompte 
-                                    on detailEtatDecompte.id_etat_decompte equals etatDecompte.id_etat_decompte
-                                join prestation in _dbContext.Prestation 
-                                    on etatDecompte.id_prestation equals prestation.id_prestation
-                                join echantillon in _dbContext.Echantillon 
-                                    on prestation.id_prestation equals echantillon.id_prestation
-                                join typeEchantillon in _dbContext.Type_echantillon 
-                                    on echantillon.id_type_echantillon equals typeEchantillon.id_type_echantillon
-                                join typeTravauxTypeEchantillon in _dbContext.Type_travaux_type_echantillon
-                                    on new { echantillon.id_type_echantillon, typeTravaux.id_type_travaux }
-                                    equals new { typeTravauxTypeEchantillon.id_type_echantillon, typeTravauxTypeEchantillon.id_type_travaux }
-                                where 
-                                    etatDecompte.id_etat_decompte == demande.id_etat_decompte
-                                group detailEtatDecompte by new 
-                                { 
-                                    typeTravaux.designation, 
-                                    detailEtatDecompte.prix_unitaire 
-                                } into g
-                                select new TravauxInfo
-                                {
-                                    Designation = g.Key.designation,
-                                    Nombre = g.Count(),
-                                    PrixUnitaire = g.Key.prix_unitaire
-                                }).ToListAsync();                                        
-                    */
-                   
                     /*
                         select type_travaux.designation, details_etat_decompte.nombre, details_etat_decompte.prix_unitaire 
                         from details_etat_decompte
@@ -278,16 +248,10 @@ namespace LIMS_PaiementBack.Repositories
             // Récupération de la liste des demandes de note de débit à faire
             // en effectuant une jointure entre les tables Etat_prestation, Prestation et Etat_decompte
             var liste = await (
-                /*
-                    from etat_prestation in _dbContext.Etat_prestation
-                    join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
-                    join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                    where etat_prestation.id_etat_prestation == 3
-                */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true 
-                // where prestation.status_paiement == false
+                // where prestation.status_paiement == true 
+                where prestation.status_paiement == false
                     && prestation.demandeEffectuer == false
                 orderby etat_decompte.date_etat_decompte descending
                 select new
@@ -325,16 +289,10 @@ namespace LIMS_PaiementBack.Repositories
 
             // 1️⃣ Récupérer les ID des EtatDecompte du jour
             var etatDecompteJour = await (
-                /*
-                    from etat_prestation in _dbContext.Etat_prestation
-                    join prestation in _dbContext.Prestation on etat_prestation.id_etat_prestation equals prestation.id_etat_prestation
-                    join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                    where etat_prestation.id_etat_prestation == 3 && etat_decompte.date_etat_decompte == today
-                */
                 from prestation in _dbContext.Prestation
                 join etat_decompte in _dbContext.Etat_decompte on prestation.id_prestation equals etat_decompte.id_prestation
-                where prestation.status_paiement == true
-                // where prestation.status_paiement == false
+                // where prestation.status_paiement == true
+                where prestation.status_paiement == false
                     && prestation.demandeEffectuer == false 
                     && etat_decompte.date_etat_decompte == today
                 orderby etat_decompte.date_etat_decompte descending

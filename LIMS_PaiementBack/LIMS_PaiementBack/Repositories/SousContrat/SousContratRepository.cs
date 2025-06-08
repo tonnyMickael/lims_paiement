@@ -49,21 +49,7 @@ namespace LIMS_PaiementBack.Repositories
                     await transaction.RollbackAsync();
                     throw;
                 }
-            }
-            /*
-                // await _dbContext.Prestation
-                //     .Where(prestation =>
-                //         _dbContext.Etat_decompte
-                //             .Where(ed => _dbContext.Paiement
-                //                 .Where(p => p.idPaiement == paiement.idPaiement)
-                //                 .Select(p => p.id_etat_decompte)
-                //                 .Contains(ed.id_etat_decompte)
-                //             )
-                //             .Select(ed => ed.id_prestation)
-                //             .Contains(prestation.id_prestation)
-                //     )
-                //     .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, 5));
-            */
+            }            
         }
 
         /*
@@ -81,7 +67,8 @@ namespace LIMS_PaiementBack.Repositories
                 join client in _dbContext.Client on prestation.id_client equals client.id_client
                 // join partenaire in _dbContext.Partenaire on sousContrat.idPartenaire equals partenaire.idPartenaire
                 // join contrat in _dbContext.ContratPartenaire on partenaire.idPartenaire equals contrat.idPartenaire
-                where paiement.id_modePaiement == 4 && paiement.EtatPaiement == false // Etat de paiement pour le sous contrat (non payé)
+                where paiement.id_modePaiement == 4
+                     && paiement.EtatPaiement == false // Etat de paiement pour le sous contrat (non payé)
                 select new SousContratDto
                 {
                     Paiement = new PaiementDto
@@ -165,8 +152,8 @@ namespace LIMS_PaiementBack.Repositories
                     .Select(ed => ed.id_prestation)
                     .Contains(prestation.id_prestation)
                 )
-                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
-                // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
+                // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
+                .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
 
             var paiement = await _dbContext.Paiement.FirstOrDefaultAsync(p => p.id_etat_decompte == id_etat_decompte);
             if (paiement != null)

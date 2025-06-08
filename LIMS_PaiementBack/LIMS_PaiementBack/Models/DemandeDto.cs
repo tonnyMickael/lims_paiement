@@ -18,6 +18,7 @@
         public string? objet { get; set; }
         public string? montant_literal { get; set; }
         public string? travaux { get; set; }
+        public int id_destinataire { get; set; }
         
         // Attributs Etat_decompte utile pour liste
         public string? referenceEtatDecompte { get; set; }

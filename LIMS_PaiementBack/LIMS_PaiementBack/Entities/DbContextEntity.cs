@@ -19,6 +19,7 @@ namespace LIMS_PaiementBack.Entities
         public DbSet<Type_travaux_type_echantillonEntity> Type_travaux_type_echantillon { get; set; }
 
         //mes table à créer dans la base de donnée 
+        public DbSet<BanqueEntity> Banque { get; set;}
         public DbSet<SemaineEntity> Semaine { get; set; }
         public DbSet<PaiementEntity> Paiement { get; set; }
         public DbSet<DelaiEntity> DelaiPaiement { get; set; }
@@ -45,7 +46,7 @@ namespace LIMS_PaiementBack.Entities
             modelBuilder.Entity<TypeTravauxEntity>().ToTable("Type_travaux");
             modelBuilder.Entity<DestinataireEntity>().ToTable("Destinataire");
             modelBuilder.Entity<EtatDecompteEntity>().ToTable("Etat_decompte");
-            modelBuilder.Entity<TypeEchantillonEntity>().ToTable("type_echantillon");
+            modelBuilder.Entity<TypeEchantillonEntity>().ToTable("Type_echantillon");
             modelBuilder.Entity<Details_etat_decompte_Entity>().ToTable("Details_etat_decompte");
             modelBuilder.Entity<Type_travaux_type_echantillonEntity>().ToTable("type_travaux_type_echantillon").HasKey(e => new { e.id_type_echantillon, e.id_type_travaux });
             
@@ -99,6 +100,12 @@ namespace LIMS_PaiementBack.Entities
                 .WithMany(m => m.ordreDeVirements)
                 .HasForeignKey(e => e.idPaiement)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            modelBuilder.Entity<OrdreDeVirementEntity>()
+                .HasOne(e => e.banque)
+                .WithMany(m => m.OrdreDeVirements)
+                .HasForeignKey(e => e.id_banque)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ReceptionEspeceEntity>()
                 .HasOne(e => e.Paiement)
@@ -112,13 +119,13 @@ namespace LIMS_PaiementBack.Entities
                 .HasForeignKey(e => e.idPaiement)
                 .OnDelete(DeleteBehavior.Restrict);
                 
-            /*
-                // modelBuilder.Entity<SousContratEntity>()
-                //     .HasOne(e => e.paiement)
-                //     .WithMany(m => m.sousContrat)
-                //     .HasForeignKey(e => e.idPaiement)
-                //     .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SousContratEntity>()
+                .HasOne(e => e.paiement)
+                .WithMany(m => m.sousContrat)
+                .HasForeignKey(e => e.idPaiement)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            /*
                 // modelBuilder.Entity<SousContratEntity>()
                 //     .HasOne(e => e.partenaire)
                 //     .WithMany(m => m.sousContrat)
