@@ -20,7 +20,8 @@ namespace LIMS_PaiementBack.Services.Depart
         {
             var destinataires = new DestinataireEntity
             {
-                designation = destinataire.designation
+                designation = destinataire.designation ?? string.Empty
+                // designation = destinataire.designation
             };
 
             await _destinataireRepository.AddNewDestinataire(destinataires);

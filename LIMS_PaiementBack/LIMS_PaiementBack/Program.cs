@@ -90,7 +90,7 @@ builder.Services.AddScoped<IDepartService, DepartService>();
 builder.Services.AddScoped<IBanqueRepository, BanqueRepository>();
 builder.Services.AddScoped<IBanqueService, BanqueService>();
 
-builder.Services.AddScoped<Email>();
+// builder.Services.AddScoped<Email>();
 
 var app = builder.Build();
 

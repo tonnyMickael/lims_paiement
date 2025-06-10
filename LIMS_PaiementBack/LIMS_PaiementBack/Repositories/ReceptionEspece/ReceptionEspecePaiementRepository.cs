@@ -55,9 +55,9 @@ namespace LIMS_PaiementBack.Repositories
                             .Select(p => p.id_etat_decompte)
                             .Contains(ed.id_etat_decompte)
                         ))
-                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, DateTime.Now))
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(e => e.date_paiement, DateTime.Now));
                         // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, true));
-                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
+                        // .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.status_paiement, false));
 
                     await transaction.CommitAsync();
                 }
@@ -140,6 +140,7 @@ namespace LIMS_PaiementBack.Repositories
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
                 where (paiement.id_modePaiement == 1 || paiement.id_modePaiement == 4)
                         && paiement.EtatPaiement == false
+                        && paiement.DatePaiement.HasValue 
                         && paiement.DatePaiement.Value.Date == today.Date
                 orderby paiement.idPaiement descending
                 select new RecuDto

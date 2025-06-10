@@ -96,7 +96,9 @@ namespace LIMS_PaiementBack.Repositories
             var banques = await _dbContext.Banque.FindAsync(Id_banque);
             if (banques != null)
             {
-                banques.designation = banque.designation;
+                // banques.designation = banque.designation;
+                banques.designation = banque.designation ?? string.Empty;
+                await _dbContext.SaveChangesAsync();
             }
         }
         

@@ -32,10 +32,14 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
         */
         public async Task<ApiResponse> GetAllSemaine()
         {
-            var dernieresSemaines = _dbContext.Semaine
+            // var dernieresSemaines = _dbContext.Semaine
+            //     .OrderByDescending(s => s.DebutSemaine)
+            //     .Take(4)
+            //     .ToList();
+            var dernieresSemaines = await _dbContext.Semaine
                 .OrderByDescending(s => s.DebutSemaine)
                 .Take(4)
-                .ToList();
+                .ToListAsync();
 
             return new ApiResponse
             {
@@ -96,7 +100,7 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
             }
             else
             {
-                // Si aucune semaine n’est enregistrée, on retourne une réponse d’échec
+                // Si aucune semaine n'est enregistrée, on retourne une réponse d'échec
                 return new ApiResponse
                 {
                     Data = new List<VersementHebdomadaireDto>(),
