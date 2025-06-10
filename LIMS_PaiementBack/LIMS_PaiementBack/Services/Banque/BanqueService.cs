@@ -18,7 +18,8 @@ namespace LIMS_PaiementBack.Services
         {
             var banqueEntity = new BanqueEntity
             {
-                designation = banque.designation
+                designation = banque.designation ?? string.Empty
+                // designation = banque.designation
             };
 
             await _banqueRepository.AddNewBanque(banqueEntity);

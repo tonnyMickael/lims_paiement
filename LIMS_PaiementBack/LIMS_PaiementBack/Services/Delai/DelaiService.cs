@@ -76,7 +76,8 @@ namespace LIMS_PaiementBack.Services
             }
 
             //verification du stat du client qui est sous contrat ou non 
-            if(data.Message.ToString() == "Client sous contrat suivre procédure") 
+            // if(data.Message.ToString() == "Client sous contrat suivre procédure") 
+            if(data.Message?.ToString() == "Client sous contrat suivre procédure") 
             {
                 return new ApiResponse
                 {
@@ -121,7 +122,8 @@ namespace LIMS_PaiementBack.Services
                     Data = data.Data,
                     ViewBag = new Dictionary<string, object>
                     {
-                        {"id_etat_decompte", data.ViewBag["id_etat_decompte"] },
+                        // {"id_etat_decompte", data.ViewBag["id_etat_decompte"]},
+                        {"id_etat_decompte", data.ViewBag?["id_etat_decompte"] ?? 0 },
                         {"totalEchantillon", totalEchantillons6Mois }
                     },
                     Message = "Délai accordé pour le test de période de 6 mois",
@@ -146,7 +148,7 @@ namespace LIMS_PaiementBack.Services
                     Data = data.Data,
                     ViewBag = new Dictionary<string, object>
                     {
-                        {"id_etat_decompte", data.ViewBag["id_etat_decompte"] },
+                        {"id_etat_decompte", data.ViewBag?["id_etat_decompte"] ?? 0},
                         {"totalEchantillon", totalEchantillons1An }
                     },
                     Message ="Délai accordé pour le test de période de 1 an",

@@ -20,7 +20,8 @@ namespace LIMS_PaiementBack.Services
         {
             var recepeiton = new OrdreDeVirementEntity
             {
-                reference = recu.referenceOV,
+                reference = recu.referenceOV ?? string.Empty,
+                // reference = recu.referenceOV,
                 id_banque = recu.id_banque,
                 idPaiement = recu.id_paiement
             };

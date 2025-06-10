@@ -8,12 +8,12 @@ namespace LIMS_PaiementBack.Services
     public class EspecePaiementService : IEspecePaiementService
     {
         private readonly IEspecePaiementRepository _especePaiementRepository;
-        private readonly Email _email;
+        // private readonly Email _email;
 
-        public EspecePaiementService(IEspecePaiementRepository especePaiementRepository, Email email)
+        public EspecePaiementService(IEspecePaiementRepository especePaiementRepository)
         {
             _especePaiementRepository = especePaiementRepository;
-            _email = email;
+            // _email = email;
         }
 
         public async Task AddEspecePaiement(PaiementDto paiement)
@@ -32,11 +32,11 @@ namespace LIMS_PaiementBack.Services
             await _especePaiementRepository.AddPaiementEspece(paiements);
 
             // Envoyer un email si l'adresse email est renseignée
-            if (!string.IsNullOrEmpty(paiement.email))
-            {
-                await _email.SendEmailAsync(paiement.email, "Confirmation de paiement",
-                    $"Votre paiement de {paiement.montant} a été reçu avec succès.");
-            }
+            // if (!string.IsNullOrEmpty(paiement.email))
+            // {
+            //     await _email.SendEmailAsync(paiement.email, "Confirmation de paiement",
+            //         $"Votre paiement de {paiement.montant} a été reçu avec succès.");
+            // }
         }
 
         public async Task<ApiResponse> GetInfoEspecePaiement(int id_etat_decompte)

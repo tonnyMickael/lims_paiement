@@ -187,17 +187,38 @@ namespace LIMS_PaiementBack.Repositories
         */
         public async Task<ApiResponse> GetDemandesAsync(int id_etat_decompte)
         {
+            /*
             var type = await _dbContext.Echantillon
-                .Where(e => e.prestation.EtatDecompte.id_etat_decompte == id_etat_decompte)
+                // .Where(e => e.prestation.EtatDecompte.id_etat_decompte == id_etat_decompte)
+                .Where(e => e.prestation != null && e.prestation.EtatDecompte != null && e.prestation.EtatDecompte.id_etat_decompte == id_etat_decompte)
                 .GroupBy(e => e.typeEchantillon.designation)
                 .Select(g => g.Key) // Prend uniquement la designation
                 .ToListAsync();
+            */
+            var type = await _dbContext.Echantillon
+                .Where(e => e.prestation != null && e.prestation.EtatDecompte != null && e.prestation.EtatDecompte.id_etat_decompte == id_etat_decompte)
+                .Where(e => e.typeEchantillon != null && e.typeEchantillon.designation != null)
+                .GroupBy(e => e.typeEchantillon!.designation!)
+                .Select(g => g.Key)
+                .ToListAsync();
 
+            /*
             var travaux = await _dbContext.Details_etat_decompte
                 .Where(d => d.EtatDecompte != null 
                         && d.EtatDecompte.id_etat_decompte == id_etat_decompte
                         && d.TypeTravaux != null)
-                .Select(d => d.TypeTravaux.designation)
+                // .Select(d => d.TypeTravaux.designation)
+                .Select(d => d.TypeTravaux != null ? d.TypeTravaux.designation : null)
+                .Where(d => d != null)
+                .Distinct()
+                .ToListAsync();
+            */
+            var travaux = await _dbContext.Details_etat_decompte
+                .Where(d => d.EtatDecompte != null 
+                        && d.EtatDecompte.id_etat_decompte == id_etat_decompte
+                        && d.TypeTravaux != null
+                        && d.TypeTravaux.designation != null)
+                .Select(d => d.TypeTravaux!.designation!)
                 .Distinct()
                 .ToListAsync();
 
@@ -219,7 +240,7 @@ namespace LIMS_PaiementBack.Repositories
                     montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise),// récuperation du montant réel à payer
                     nombreEchantillon = echantillonsGroup.Count(),
                     montant_literal = FonctionGlobalUtil.ConvertirMontantEnLettres(etatDecompte.total_montant, etatDecompte.remise),
-                    objet = FonctionGlobalUtil.GetObjetEchantillon(type),
+                    objet = FonctionGlobalUtil.GetObjetEchantillon(type),                    
                     travaux = FonctionGlobalUtil.GetTravaux(travaux) // récuperation de la liste des travaux
                 }).ToListAsync();                      
 
