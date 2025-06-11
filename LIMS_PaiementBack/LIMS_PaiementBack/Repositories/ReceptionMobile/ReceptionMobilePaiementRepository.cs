@@ -99,12 +99,14 @@ namespace LIMS_PaiementBack.Repositories
             var dateDebutGlobale = semaines.Min(s => s.DebutSemaine.Date);
             var dateFinGlobale = semaines.Max(s => s.FinSemaine.Date);
 
+            /*
             var recue = await (
                 from paiement in _dbContext.Paiement 
-                join delaipaiement in _dbContext.DelaiPaiement on paiement.idPaiement equals delaipaiement.idPaiement
+                // join delaipaiement in _dbContext.DelaiPaiement on paiement.idPaiement equals delaipaiement.idPaiement
                 join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
                 join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
-                where (paiement.id_modePaiement == 2 || delaipaiement.id_modePaiement == 2) && paiement.EtatPaiement == true
+                // where (paiement.id_modePaiement == 2 || delaipaiement.id_modePaiement == 2) && paiement.EtatPaiement == true
+                where paiement.id_modePaiement == 2 && paiement.EtatPaiement == true
                         && paiement.DatePaiement >= dateDebutGlobale
                         && paiement.DatePaiement <= dateFinGlobale
                 group new { paiement, etat_decompte } by (paiement.DatePaiement != null ? paiement.DatePaiement.Value.Date : DateTime.MinValue) into g
@@ -113,6 +115,24 @@ namespace LIMS_PaiementBack.Repositories
                     Date = g.Key,
                     NombrePaiement = g.Count(),
                     MontantTotal = g.Sum(x => (double)x.etat_decompte.total_montant * (1 - x.etat_decompte.remise / 100.0)),
+                }).OrderBy(x => x.Date).ToListAsync();
+            */
+            var recue = await (
+                from paiement in _dbContext.Paiement 
+                join delaipaiement in _dbContext.DelaiPaiement on paiement.idPaiement equals delaipaiement.idPaiement into delaiGroup
+                from delai in delaiGroup.DefaultIfEmpty()
+                join etat_decompte in _dbContext.Etat_decompte on paiement.id_etat_decompte equals etat_decompte.id_etat_decompte
+                join prestation in _dbContext.Prestation on etat_decompte.id_prestation equals prestation.id_prestation
+                where (paiement.id_modePaiement == 2 || (delai != null && delai.id_modePaiement == 2)) 
+                    && paiement.EtatPaiement == true
+                    && paiement.DatePaiement >= dateDebutGlobale
+                    && paiement.DatePaiement <= dateFinGlobale
+                group new { paiement, etat_decompte } by paiement.DatePaiement!.Value.Date into g
+                select new RecuDto
+                {
+                    Date = g.Key,
+                    NombrePaiement = g.Count(),
+                    MontantTotal = g.Sum(x => (double)x.etat_decompte.total_montant * (1 - x.etat_decompte.remise / 100.0))
                 }).OrderBy(x => x.Date).ToListAsync();
 
             return new ApiResponse

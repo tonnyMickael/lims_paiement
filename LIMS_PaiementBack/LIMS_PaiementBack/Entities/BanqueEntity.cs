@@ -10,7 +10,7 @@ namespace LIMS_PaiementBack.Entities
         public int id_banque { get; set; }
         public string designation { get; set; } = string.Empty;
 
-        public ICollection<OrdreDeVirementEntity> OrdreDeVirements { get; set; } = new List<OrdreDeVirementEntity>();
+        public List<OrdreDeVirementEntity> OrdreDeVirements { get; set; } = new List<OrdreDeVirementEntity>();
 
     }
 }
