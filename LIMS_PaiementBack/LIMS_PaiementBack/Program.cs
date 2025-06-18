@@ -51,9 +51,6 @@ builder.Services.AddScoped<IDemandeService, DemandeService>();
 builder.Services.AddScoped<IDelaiRepository, DelaiRepository>();
 builder.Services.AddScoped<IDelaiService, DelaiService>();
 
-// builder.Services.AddScoped<IContratRepository, ContratRepository>();
-// builder.Services.AddScoped<IContratService, ContratService>();
-
 builder.Services.AddScoped<IEspecePaiementRepository, EspecePaiementRepository>();
 builder.Services.AddScoped<IEspecePaiementService, EspecePaiementService>();
 
@@ -89,6 +86,9 @@ builder.Services.AddScoped<IDepartService, DepartService>();
 
 builder.Services.AddScoped<IBanqueRepository, BanqueRepository>();
 builder.Services.AddScoped<IBanqueService, BanqueService>();
+
+// Enregistrement du service de référence
+builder.Services.AddScoped<IReferenceService, ReferenceService>();
 
 // builder.Services.AddScoped<Email>();
 
