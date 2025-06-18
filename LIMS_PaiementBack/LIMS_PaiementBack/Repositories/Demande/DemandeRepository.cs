@@ -1,6 +1,7 @@
 ﻿using LIMS_PaiementBack.Entities;
 using LIMS_PaiementBack.Models;
 using LIMS_PaiementBack.Utils;
+using LIMS_PaiementBack.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -12,10 +13,12 @@ namespace LIMS_PaiementBack.Repositories
     public class DemandeRepository : IDemandeRepository
     {
         private readonly DbContextEntity _dbContext;
+        private readonly IReferenceService _referenceService;
 
-        public DemandeRepository(DbContextEntity dbContext)
+        public DemandeRepository(DbContextEntity dbContext, IReferenceService referenceService)
         {
             _dbContext = dbContext;
+            _referenceService = referenceService;
         }
 
         // ajout de nouveau demande de note de débit
@@ -28,6 +31,7 @@ namespace LIMS_PaiementBack.Repositories
             * @return : Tâche asynchrone qui retourne un tableau d'octets représentant le PDF généré.
             * @throws : Exception si une erreur se produit lors de l'exécution de la requête.
         */
+        /*
         public async Task<List<byte[]>> AddDemandeAsync(DemandeEntity demande, DemandeDto demandeDto)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
@@ -66,10 +70,10 @@ namespace LIMS_PaiementBack.Repositories
                         throw new Exception("Impossible de récupérer les informations liées à la demande.");
 
                     // 4. Récupérer l'identifiant du destinataire
-                    int id_destinataire = await _dbContext.Destinataire
-                        .Where(d => d.designation == "Département Administratif et Financier")//rectifier ici pour reconnaitre les diminitifs minuscule et masjucule 
-                        .Select(c => c.idDestinataire)
-                        .FirstOrDefaultAsync();
+                    // int id_destinataire = await _dbContext.Destinataire
+                    //     .Where(d => d.designation == "Département Administratif et Financier")//rectifier ici pour reconnaitre les diminitifs minuscule et masjucule 
+                    //     .Select(c => c.idDestinataire)
+                    //     .FirstOrDefaultAsync();
 
                     // 5. Créer l'objet DepartEntity
                     var depart = new DepartEntity
@@ -95,7 +99,7 @@ namespace LIMS_PaiementBack.Repositories
                             inner join type_travaux 
                                 on details_etat_decompte.id_type_travaux = type_travaux.id_type_travaux
                         where id_etat_decompte = 11;
-                    */
+                    
 
                     var travauxInfos = await (
                         from details_etat_decompte in _dbContext.Details_etat_decompte
@@ -110,7 +114,7 @@ namespace LIMS_PaiementBack.Repositories
                         }).ToListAsync();    
 
                     // 8. Générer les PDF (hors transaction car ce n'est pas en base)
-                    Console.WriteLine("LES TRAVAUUXXXXXXXX : "+JsonSerializer.Serialize(travauxInfos));
+                    // Console.WriteLine("LES TRAVAUUXXXXXXXX : "+JsonSerializer.Serialize(travauxInfos));
                     byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
                     byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
 
@@ -130,7 +134,89 @@ namespace LIMS_PaiementBack.Repositories
                 }
             }
         }
+        */
+        public async Task<List<byte[]>> AddDemandeAsync(DemandeEntity demande, DemandeDto demandeDto)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Obtenir la nouvelle référence via le service
+                    int newReference = await _referenceService.GetNextReferenceAsync(DateTime.Now);
 
+                    // 2. Mise à jour de l'état de la prestation pour la demande de note de débit
+                    await _dbContext.Prestation
+                        .Where(p => p.id_prestation == _dbContext.Etat_decompte
+                            .Where(e => e.id_etat_decompte == demande.id_etat_decompte)
+                            .Select(e => e.id_prestation)
+                            .FirstOrDefault())
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(p => p.demandeEffectuer, true));            
+
+                    // 3. Récupérer les infos pour créer le départ
+                    var infos = await (
+                        from ed in _dbContext.Etat_decompte
+                        join p in _dbContext.Prestation on ed.id_prestation equals p.id_prestation
+                        join c in _dbContext.Client on p.id_client equals c.id_client
+                        where ed.id_etat_decompte == demande.id_etat_decompte
+                        select new
+                        {
+                            ReferenceEtatDecompte = ed.ReferenceEtatDecompte,
+                            NomClient = c.Nom,
+                        }).FirstOrDefaultAsync();
+
+                    if (infos == null)
+                        throw new Exception("Impossible de récupérer les informations liées à la demande.");
+
+                    // 5. Créer l'objet DepartEntity
+                    var depart = new DepartEntity
+                    {
+                        reference = newReference,
+                        objet = $"Demande d'Etablissement de note de débit {infos.ReferenceEtatDecompte} au nom de {infos.NomClient} d'un montant de {demande.montant} ar",
+                        DateDepart = DateTime.Now,
+                        idDestinataire = demandeDto.id_destinataire
+                    };
+
+                    // 6. Affecter la référence à la demande
+                    demande.reference = newReference;
+
+                    // 7. Enregistrer demande et départ
+                    await _dbContext.DemandeNoteDebit.AddAsync(demande);
+                    await _dbContext.Depart.AddAsync(depart);
+                    await _dbContext.SaveChangesAsync();
+
+                    var travauxInfos = await (
+                        from details_etat_decompte in _dbContext.Details_etat_decompte
+                        join type_travaux in _dbContext.Type_travaux
+                            on details_etat_decompte.id_type_travaux equals type_travaux.id_type_travaux
+                        where details_etat_decompte.id_etat_decompte == demande.id_etat_decompte
+                        select new TravauxInfo
+                        {
+                            Designation = type_travaux.designation,
+                            Nombre = details_etat_decompte.nombre,
+                            PrixUnitaire = details_etat_decompte.prix_unitaire
+                        }).ToListAsync();    
+
+                    // 8. Générer les PDF
+                    byte[] pdfBytes = FonctionGlobalUtil.GenerateDemandePdf(demandeDto, newReference);
+                    byte[] pdfBytes2 = FonctionGlobalUtil.GenerateNoteDebitPdf(demandeDto, travauxInfos);
+
+                    List<byte[]> pdfBytesList = new List<byte[]>();
+                    pdfBytesList.Add(pdfBytes);
+                    pdfBytesList.Add(pdfBytes2);
+
+                    // 9. Valider la transaction
+                    await transaction.CommitAsync();
+
+                    return pdfBytesList;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+        
         // liste des demande de note de débit éffectuer
         /*
             * Cette méthode permet de récupérer toutes les demandes de note de débit effectuées.

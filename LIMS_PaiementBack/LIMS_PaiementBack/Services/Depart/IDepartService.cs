@@ -9,7 +9,7 @@ namespace LIMS_PaiementBack.Services.Depart
 {
     public interface IDepartService
     {
-        Task<ApiResponse> GetAllDeparts();
+        Task<ApiResponse> GetAllDeparts(int? annee = null);
         Task<ApiResponse> GetAllDestinataire();
         Task AddDepart(DepartDto depart);
     }

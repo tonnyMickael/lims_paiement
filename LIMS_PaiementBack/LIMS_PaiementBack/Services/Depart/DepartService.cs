@@ -32,9 +32,9 @@ namespace LIMS_PaiementBack.Services.Depart
             await _departRepository.DepartAdd(departEntity);
         }    
 
-        public async Task<ApiResponse> GetAllDeparts()
+        public async Task<ApiResponse> GetAllDeparts(int? annee = null)
         {
-            return await _departRepository.DepartGetAllDemande();
+            return await _departRepository.DepartGetAllDemande(annee);
         }
 
         public async Task<ApiResponse> GetAllDestinataire()

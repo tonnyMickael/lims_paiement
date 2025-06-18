@@ -10,7 +10,7 @@ namespace LIMS_PaiementBack.Repositories.Depart
     public interface IDepartRepository
     {
         Task DepartAdd(DepartEntity depart);
-        Task<ApiResponse> DepartGetAllDemande();
+        Task<ApiResponse> DepartGetAllDemande(int? annee = null);
         Task<ApiResponse> DestinataireGetAll();
     }
 }

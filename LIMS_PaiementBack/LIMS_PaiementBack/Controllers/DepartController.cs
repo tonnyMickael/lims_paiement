@@ -22,9 +22,9 @@ namespace LIMS_PaiementBack.Controllers
         }
 
         [HttpGet("listeDepart")]
-        public async Task<IActionResult> GetDepartsDemande()
+        public async Task<IActionResult> GetDepartsDemande([FromQuery] int? annee = null)
         {
-            var departs = await _depart.GetAllDeparts();
+            var departs = await _depart.GetAllDeparts(annee);
             return Ok(departs);
         }
 
