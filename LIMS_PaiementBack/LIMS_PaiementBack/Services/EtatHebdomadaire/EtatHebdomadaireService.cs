@@ -29,7 +29,8 @@ namespace LIMS_PaiementBack.Services.EtatHebdomadaire
             var semaine = new SemaineEntity
             {
                 DebutSemaine = week.debutSemaine ?? default(DateTime),
-                FinSemaine = week.finSemaine ?? default(DateTime)
+                FinSemaine = week.finSemaine ?? default(DateTime),
+                responsable = week.responsable
             };
 
             await _hebdomadaireRepository.AddSemaine(semaine);

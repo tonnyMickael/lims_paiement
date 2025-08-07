@@ -10,6 +10,7 @@ namespace LIMS_PaiementBack.Entities
         public int idSemaine { get; set; }
         public DateTime DebutSemaine { get; set; }
         public DateTime FinSemaine { get; set; }
+        public string responsable { get; set; }
 
         public List<EtatHebdomadaireEntity> Hebdomadaire = new List<EtatHebdomadaireEntity>();
     }

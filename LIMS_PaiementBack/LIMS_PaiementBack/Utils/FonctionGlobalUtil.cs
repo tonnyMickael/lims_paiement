@@ -20,6 +20,23 @@ namespace LIMS_PaiementBack.Utils
             return !string.IsNullOrEmpty(CIN) ? CIN : (!string.IsNullOrEmpty(Passport) ? Passport : "Aucune identité");
         }
 
+        // Prendre l'identité du client en vérifiant chaque champ
+        public static string GetClientIdentity(string? CIN, string? Passport, string? nif, string? stat)
+        {
+            if (!string.IsNullOrEmpty(CIN))
+                return CIN;
+            else if (!string.IsNullOrEmpty(Passport))
+                return Passport;
+            else if (!string.IsNullOrEmpty(nif) && !string.IsNullOrEmpty(stat))
+                return nif + "/" + stat;
+            else if (!string.IsNullOrEmpty(nif))
+                return nif;
+            else if (!string.IsNullOrEmpty(stat))
+                return stat;
+            else
+                return "Aucune identité";
+        }
+
         //calcul du montant réel avec la remise 
         public static double MontantReel(decimal total, double remise)
         {
@@ -103,6 +120,7 @@ namespace LIMS_PaiementBack.Utils
 
                         col.Item().Text($"Client : {demande.clients}");
                         col.Item().Text($"CIN/Passeport ou NIF/STAT : {demande.identite}");
+                        // col.Item().Text($"NIF/STAT : {demande.nif}/{demande.stat}");
                         col.Item().Text($"Téléphone : {demande.contact}");
                         col.Item().Text($"Adresse : {demande.adresse}");
                         col.Item().Text($"Email : {demande.email}");
@@ -173,6 +191,7 @@ namespace LIMS_PaiementBack.Utils
                                 {
                                     rightCol.Item().Text(demande.clients).Bold();
                                     rightCol.Item().Text($"CIN/Passeport ou NIF/STAT : {demande.identite}");
+                                    // rightCol.Item().Text($"NIF/STAT : {demande.nif}/{demande.stat}");
                                     rightCol.Item().Text($"Tél : {demande.contact}");
                                     rightCol.Item().Text($"Email : {demande.email}");
                                     rightCol.Item().Text($"Adresse : {demande.adresse}");

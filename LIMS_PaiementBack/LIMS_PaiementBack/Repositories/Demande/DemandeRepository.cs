@@ -319,7 +319,8 @@ namespace LIMS_PaiementBack.Repositories
                     email = client.Email,
                     adresse = client.Adresse,
                     contact = client.Contact,
-                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récuperation de d'identité du client
+                    // identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récuperation de d'identité du client
+                    identite = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? "", client.NIF ?? "", client.STAT ?? ""), // récuperation de d'identité du client
                     etatDecompte = etatDecompte.ReferenceEtatDecompte,
                     datePaiement = DateTime.Now,
                     id_etat_decompte = etatDecompte.id_etat_decompte,

@@ -10,5 +10,6 @@
         public string? clients { get; set; }
         public double montant { get; set; }
         public int observation { get; set; }
+        // public string responsable { get; set; }
     }
 }
