@@ -24,6 +24,10 @@ namespace LIMS_PaiementBack.Entities
         public string ref_contrat { get; set; } = string.Empty;
         [Column("isInterne")]
         public bool IsInterne { get; set; }
+        [Column("nif")]
+        public string NIF { get; set; }
+        [Column("stat")]
+        public string STAT { get; set;}
 
         //propriete de naviagation
         // Un client peut avoir plusieurs prestations (0-n)

@@ -117,7 +117,8 @@ namespace LIMS_PaiementBack.Repositories
                 {
                     Nom = client.Nom,
                     Adresse = client.Adresse,
-                    Identity = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récupère l'identité depuis CIN ou Passeport
+                    // Identity = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? ""), // récupère l'identité depuis CIN ou Passeport
+                    Identity = FonctionGlobalUtil.GetClientIdentity(client.CIN ?? "", client.Passport ?? "", client.NIF ?? "", client.STAT ?? ""), // récupère l'identité depuis CIN ou Passeport
                     ref_contrat = client.ref_contrat ?? "" // référence du contrat lié au client
                 }).FirstOrDefaultAsync(); // récupère le premier résultat trouvé ou null si aucun
 

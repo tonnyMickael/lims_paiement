@@ -149,7 +149,8 @@ namespace LIMS_PaiementBack.Repositories.EtatHebdomadaire
                     EtatDecompte = etatDecompte.ReferenceEtatDecompte,    // Référence de l'état de décompte
                     clients = client.Nom,                                // Nom du client
                     montant = FonctionGlobalUtil.MontantReel(etatDecompte.total_montant, etatDecompte.remise), // Montant après remise
-                    observation = EtatJournalier.Observation    // Observations diverses
+                    observation = EtatJournalier.Observation,    // Observations diverses
+                    // responsable = semaine.responsable
                 }).ToListAsync(); // Exécute la requête de manière asynchrone
 
             return new ApiResponse 
